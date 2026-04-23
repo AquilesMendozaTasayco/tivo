@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import UneteModal from "./UneteModal";
 
 // ── Dropdown estático de Ventajas ─────────────────────────────
@@ -43,7 +42,7 @@ export default function Navbar() {
             {/* ── LOGO + TEXTO ── */}
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative w-12 h-12 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <Image
+                <img
                   src="/logo.png"
                   alt="TIVO"
                   width={48}
@@ -53,7 +52,6 @@ export default function Navbar() {
                       ? "brightness-0 invert"
                       : "brightness-100 invert-0"
                   }`}
-                  priority
                 />
               </div>
               <div className="leading-tight">
