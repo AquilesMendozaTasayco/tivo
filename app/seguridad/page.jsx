@@ -99,7 +99,7 @@ export default function SeguridadPage() {
         breadcrumb="Seguridad"
       />
 
-      {/* ── SECCIÓN INTRO CON ILUSTRACIÓN ─────────────────────── */}
+      {/* ── SECCIÓN INTRO CON IMAGEN ─────────────────────── */}
       <section className="py-16 lg:py-24 px-6 lg:px-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
@@ -139,7 +139,7 @@ export default function SeguridadPage() {
             </Link>
           </motion.div>
 
-          {/* Ilustración escudo */}
+          {/* Imagen emotiva */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -147,26 +147,30 @@ export default function SeguridadPage() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative aspect-square max-w-md mx-auto">
+            <div className="relative max-w-md mx-auto">
 
-              {/* Anillos decorativos */}
-              <div className="absolute -inset-10 rounded-full border border-[#d4eef9] opacity-40" />
-              <div className="absolute -inset-4 rounded-full border-2 border-[#cfe7f4] opacity-60" />
+              {/* Resplandor decorativo detrás */}
+              <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl pointer-events-none" />
 
-              {/* Círculo principal */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#0e4a6b] via-[#0f6998] to-[#1bb5e0] shadow-2xl shadow-[#1bb5e0]/25" />
+              {/* Imagen */}
+              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/25 border-4 border-white">
+                <img
+                  src="/img5.jpg"
+                  alt="Persona viajando con tranquilidad"
+                  className="w-full h-full object-cover"
+                />
 
-              {/* Ícono escudo central animado */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <ShieldCheck className="w-32 h-32 text-white" strokeWidth={1.3} />
-                </motion.div>
+                {/* Degradado sutil para integrar con la paleta */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(5,30,46,0.1) 0%, rgba(5,30,46,0.05) 50%, rgba(14,74,107,0.35) 100%)",
+                  }}
+                />
               </div>
 
-              {/* Badges flotantes */}
+              {/* Badge flotante: Verificado */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -183,6 +187,7 @@ export default function SeguridadPage() {
                 </div>
               </motion.div>
 
+              {/* Badge flotante: Calificación */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -199,12 +204,13 @@ export default function SeguridadPage() {
                 </div>
               </motion.div>
 
+              {/* Badge flotante: Protegido */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.9 }}
-                className="absolute top-1/2 -right-10 bg-white rounded-2xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-4 py-3 flex items-center gap-3"
+                className="absolute top-1/2 -right-6 -translate-y-1/2 bg-white rounded-2xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-4 py-3 flex items-center gap-3"
               >
                 <div className="w-9 h-9 rounded-full bg-[#e8f6fb] flex items-center justify-center">
                   <Lock className="w-5 h-5 text-[#1bb5e0]" />

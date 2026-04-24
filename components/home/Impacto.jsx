@@ -49,79 +49,127 @@ export default function Impacto() {
 
       <div className="relative max-w-7xl mx-auto">
 
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center max-w-2xl mx-auto mb-16"
-        >
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-[10px] font-bold tracking-widest uppercase mb-5">
-            <Globe className="w-3 h-3" />
-            Impacto y comunidad
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-            Juntos movemos<br />la ciudad de otra forma
-          </h2>
-          <p className="text-white/75 text-base md:text-lg leading-relaxed">
-            En TIVO creemos en una movilidad más humana, donde las personas son lo más importante. No solo compartes un viaje, construyes comunidad.
-          </p>
-        </motion.div>
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-stretch">
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {stats.map((s, i) => {
-            const Icono = s.icono;
-            return (
-              <motion.div
-                key={s.titulo}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: i * 0.15 }}
-                className="group relative"
+          {/* Columna izquierda: imagen vertical */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative w-full lg:w-[42%] min-h-[520px] lg:min-h-0"
+          >
+            <div className="relative lg:absolute inset-0 rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-[#051e2e]/60 min-h-[520px] lg:min-h-full">
+              <img
+                src="/img2.jpg"
+                alt="Amigos compartiendo un viaje felices"
+                className="w-full h-full object-cover"
+              />
+
+              {/* Degradado para integrar con la paleta */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(180deg, rgba(5,30,46,0.35) 0%, rgba(5,30,46,0.1) 40%, rgba(14,74,107,0.75) 100%)",
+                }}
+              />
+
+              {/* Badge flotante sobre la imagen */}
+              <div className="absolute top-5 left-5 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] font-bold tracking-widest uppercase">
+                <Globe className="w-3 h-3" />
+                Comunidad TIVO
+              </div>
+
+              {/* Frase inferior sobre la imagen */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                <p
+                  className="text-white text-lg md:text-xl italic leading-snug"
+                  style={{ fontFamily: "Georgia, serif" }}
+                >
+                  "No solo compartes un viaje, construyes comunidad."
+                </p>
+                <div className="mt-3 h-[2px] w-12 bg-[#7fdcf2]/80" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Línea separadora vertical */}
+          <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-[#7fdcf2]/30 to-transparent self-stretch" />
+
+          {/* Columna derecha: contenido */}
+          <div className="flex-1 flex flex-col justify-center gap-10">
+
+            {/* Header */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white/90 text-[10px] font-bold tracking-widest uppercase mb-5">
+                <Globe className="w-3 h-3" />
+                Impacto y comunidad
+              </span>
+              <h2
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight"
+                style={{ fontFamily: "Georgia, serif" }}
               >
-                <div className="relative bg-white/5 backdrop-blur-sm rounded-2xl p-7 border border-white/10 hover:border-[#4ac8e8]/40 hover:bg-white/10 transition-all duration-300 h-full">
+                Juntos movemos la ciudad de otra forma
+              </h2>
+              <p className="text-white/75 text-base md:text-lg leading-relaxed">
+                En TIVO creemos en una movilidad más humana, donde las personas son lo más importante. No solo compartes un viaje, construyes comunidad.
+              </p>
+            </motion.div>
 
-                  {/* Ícono */}
-                  <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1bb5e0] to-[#4ac8e8] flex items-center justify-center shadow-lg shadow-[#1bb5e0]/40 mb-5">
-                    <div className="absolute inset-0 rounded-2xl bg-[#1bb5e0] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-                    <Icono className="relative w-7 h-7 text-white" strokeWidth={1.8} />
-                  </div>
+            {/* Stats apilados en vertical */}
+            <div className="flex flex-col gap-4">
+              {stats.map((s, i) => {
+                const Icono = s.icono;
+                return (
+                  <motion.div
+                    key={s.titulo}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.12 }}
+                    className="group relative"
+                  >
+                    <div className="flex items-start gap-5 bg-white/5 backdrop-blur-sm rounded-2xl p-5 md:p-6 border border-white/10 hover:border-[#4ac8e8]/40 hover:bg-white/10 transition-all duration-300">
 
-                  {/* Número grande */}
-                  <p className="text-4xl md:text-5xl font-bold text-white mb-2 leading-none" style={{ fontFamily: "Georgia, serif" }}>
-                    {s.numero}
-                  </p>
+                      {/* Ícono */}
+                      <div className="relative flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#1bb5e0] to-[#4ac8e8] flex items-center justify-center shadow-lg shadow-[#1bb5e0]/40">
+                        <div className="absolute inset-0 rounded-2xl bg-[#1bb5e0] blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
+                        <Icono className="relative w-6 h-6 text-white" strokeWidth={1.8} />
+                      </div>
 
-                  {/* Título */}
-                  <h3 className="text-lg font-bold text-[#7fdcf2] mb-3" style={{ fontFamily: "Georgia, serif" }}>
-                    {s.titulo}
-                  </h3>
-
-                  {/* Descripción */}
-                  <p className="text-sm text-white/70 leading-relaxed">
-                    {s.descripcion}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
+                      {/* Contenido */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline gap-3 mb-1 flex-wrap">
+                          <p
+                            className="text-3xl md:text-4xl font-bold text-white leading-none"
+                            style={{ fontFamily: "Georgia, serif" }}
+                          >
+                            {s.numero}
+                          </p>
+                          <h3
+                            className="text-base md:text-lg font-bold text-[#7fdcf2]"
+                            style={{ fontFamily: "Georgia, serif" }}
+                          >
+                            {s.titulo}
+                          </h3>
+                        </div>
+                        <p className="text-sm text-white/70 leading-relaxed">
+                          {s.descripcion}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
         </div>
-
-        {/* Frase inferior */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="text-center mt-14"
-        >
-          <p className="text-[#7fdcf2] text-lg md:text-xl italic" style={{ fontFamily: "Georgia, serif" }}>
-            "No solo compartes un viaje, construyes comunidad."
-          </p>
-        </motion.div>
       </div>
     </section>
   );

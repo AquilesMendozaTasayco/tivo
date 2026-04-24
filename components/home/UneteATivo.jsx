@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, UserPlus, ArrowRight, Smartphone } from "lucide-react";
+import { Download, UserPlus, ArrowRight, Smartphone, Star } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function UneteATivo() {
@@ -96,7 +96,7 @@ export default function UneteATivo() {
               </div>
             </div>
 
-            {/* Columna ilustración */}
+            {/* Columna imagen */}
             <div className="lg:col-span-2 flex justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -105,30 +105,62 @@ export default function UneteATivo() {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="relative"
               >
-                {/* Glow */}
-                <div className="absolute inset-0 rounded-full bg-[#1bb5e0] blur-3xl opacity-40" />
+                {/* Glow detrás */}
+                <div className="absolute inset-0 rounded-3xl bg-[#1bb5e0] blur-3xl opacity-40" />
 
-                {/* Círculo con teléfono */}
-                <div className="relative w-56 h-56 md:w-64 md:h-64 rounded-full bg-gradient-to-br from-[#1bb5e0] to-[#0f8cb8] border-4 border-white/20 flex items-center justify-center shadow-2xl">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <Smartphone className="w-28 h-28 md:w-32 md:h-32 text-white" strokeWidth={1.2} />
-                  </motion.div>
-
-                  {/* Anillos orbitando */}
-                  <motion.div
-                    className="absolute inset-[-12px] rounded-full border-2 border-dashed border-white/30"
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+                {/* Imagen */}
+                <div className="relative w-60 md:w-72 aspect-[3/4] rounded-3xl overflow-hidden border-4 border-white/20 shadow-2xl">
+                  <img
+                    src="/img3.jpg"
+                    alt="Persona feliz usando la app de TIVO"
+                    className="w-full h-full object-cover"
                   />
-                  <motion.div
-                    className="absolute inset-[-24px] rounded-full border border-white/15"
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
+
+                  {/* Degradado para integrar con la paleta */}
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(5,30,46,0.1) 0%, rgba(5,30,46,0.05) 50%, rgba(14,74,107,0.55) 100%)",
+                    }}
                   />
                 </div>
+
+                {/* Badge flotante: app */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.6 }}
+                  animate={{ y: [0, -6, 0] }}
+                  style={{ animation: undefined }}
+                  className="absolute -top-4 -left-4 bg-white rounded-2xl shadow-xl shadow-[#051e2e]/40 px-3 py-2.5 flex items-center gap-2.5"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1bb5e0] to-[#0f8cb8] flex items-center justify-center">
+                    <Smartphone className="w-5 h-5 text-white" strokeWidth={1.8} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">App TIVO</p>
+                    <p className="text-[11px] text-[#4a6170]">Disponible ya</p>
+                  </div>
+                </motion.div>
+
+                {/* Badge flotante: rating */}
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
+                  className="absolute -bottom-4 -right-4 bg-white rounded-2xl shadow-xl shadow-[#051e2e]/40 px-3 py-2.5 flex items-center gap-2.5"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-[#e8f6fb] flex items-center justify-center">
+                    <Star className="w-5 h-5 text-[#1bb5e0] fill-[#1bb5e0]" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">+1,000</p>
+                    <p className="text-[11px] text-[#4a6170]">Viajeros activos</p>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           </div>
