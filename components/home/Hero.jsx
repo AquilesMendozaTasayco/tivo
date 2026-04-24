@@ -16,7 +16,7 @@ const SLIDES_MOCK = [
     titulo: "Comparte el camino, conecta con personas",
     subtitulo:
       "En TIVO creamos una nueva forma de moverte por la ciudad, donde cada viaje es una oportunidad para conectar, ahorrar y sentirte seguro. Muévete mejor, acompañado.",
-    imagen: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=85&auto=format&fit=crop",
+    imagen: "/img7.jpg",
     cta: "Únete a TIVO",
     accion: "modal", // abre el modal Únete a TIVO
   },
@@ -25,7 +25,7 @@ const SLIDES_MOCK = [
     titulo: "Tu tranquilidad es parte del viaje",
     subtitulo:
       "Todos los usuarios en TIVO pasan por un proceso de verificación. Revisa perfiles, calificaciones y elige con quién viajar. Nos preocupamos por ti en cada trayecto.",
-    imagen: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1920&q=85&auto=format&fit=crop",
+    imagen: "/img8.jpg",
     cta: "Conoce más",
     accion: "link",
     href: "/seguridad",
@@ -35,7 +35,7 @@ const SLIDES_MOCK = [
     titulo: "Juntos movemos la ciudad de otra forma",
     subtitulo:
       "Cada viaje compartido reduce autos en las calles, disminuye la contaminación y crea una ciudad más conectada. No solo compartes un viaje, construyes comunidad.",
-    imagen: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=85&auto=format&fit=crop",
+    imagen: "/img9.jpg",
     cta: "Únete a TIVO",
     accion: "modal",
   },

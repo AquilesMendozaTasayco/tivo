@@ -29,7 +29,7 @@ const Toast = Swal.mixin({
 });
 
 const formInicial = {
-  titulo: "", subtitulo: "", cta: "", href: "/productos",
+  titulo: "", subtitulo: "", cta: "", accion: "link", href: "/",
   imagen: "", orden: 0, active: true,
 };
 
@@ -80,7 +80,8 @@ export default function AdminBannersPage() {
       titulo:    b.titulo    || "",
       subtitulo: b.subtitulo || "",
       cta:       b.cta       || "",
-      href:      b.href      || "/productos",
+      accion:    b.accion    || "link",
+      href:      b.href      || "/",
       imagen:    b.imagen    || "",
       orden:     b.orden     ?? 0,
       active:    b.active !== false,
@@ -157,9 +158,9 @@ export default function AdminBannersPage() {
 
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Total",     value: banners.length,                                  bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
-            { label: "Activos",   value: banners.filter((b) => b.active !== false).length, bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
-            { label: "Inactivos", value: banners.filter((b) => b.active === false).length,  bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
+            { label: "Total",     value: banners.length,                                     bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
+            { label: "Activos",   value: banners.filter((b) => b.active !== false).length,   bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
+            { label: "Inactivos", value: banners.filter((b) => b.active === false).length,   bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
           ].map((s, i) => (
             <motion.div key={i} className={`${s.bg} border ${s.border} rounded-2xl p-5 shadow-sm`}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -207,7 +208,10 @@ export default function AdminBannersPage() {
                         <p className="text-xs text-[#4a5a4e] line-clamp-2 mt-0.5">{b.subtitulo}</p>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                           <span className="text-[10px] text-[#9ab5a0]">CTA: <span className="text-[#1a4a2e] font-medium">{b.cta}</span></span>
-                          <span className="text-[10px] text-[#9ab5a0]">→ <span className="font-medium">{b.href}</span></span>
+                          <span className="text-[10px] text-[#9ab5a0]">Acción: <span className="font-medium">{b.accion || "link"}</span></span>
+                          {b.accion !== "modal" && (
+                            <span className="text-[10px] text-[#9ab5a0]">→ <span className="font-medium">{b.href}</span></span>
+                          )}
                           <span className="text-[10px] text-[#9ab5a0]">Orden: <span className="font-medium">{b.orden}</span></span>
                         </div>
                       </div>
@@ -266,7 +270,7 @@ export default function AdminBannersPage() {
                     <div>
                       <label className={lc}>Título *</label>
                       <input type="text" value={formData.titulo} onChange={(e) => set("titulo", e.target.value)}
-                        placeholder="La naturaleza es nuestra farmacia" className={ic} />
+                        placeholder="Comparte el camino, conecta con personas" className={ic} />
                     </div>
                     <div>
                       <label className={lc}>Subtítulo</label>
@@ -277,14 +281,23 @@ export default function AdminBannersPage() {
                       <div>
                         <label className={lc}>Texto del botón CTA</label>
                         <input type="text" value={formData.cta} onChange={(e) => set("cta", e.target.value)}
-                          placeholder="Descubre nuestros productos" className={ic} />
+                          placeholder="Únete a TIVO" className={ic} />
                       </div>
+                      <div>
+                        <label className={lc}>Tipo de acción</label>
+                        <select value={formData.accion} onChange={(e) => set("accion", e.target.value)} className={ic}>
+                          <option value="link">Link · Ir a una página</option>
+                          <option value="modal">Modal · Abrir "Únete a TIVO"</option>
+                        </select>
+                      </div>
+                    </div>
+                    {formData.accion === "link" && (
                       <div>
                         <label className={lc}>Enlace del botón</label>
                         <input type="text" value={formData.href} onChange={(e) => set("href", e.target.value)}
-                          placeholder="/productos" className={ic} />
+                          placeholder="/seguridad" className={ic} />
                       </div>
-                    </div>
+                    )}
                     <div>
                       <label className={lc}>Orden <span className="normal-case text-[#9ab5a0] tracking-normal font-normal">(menor = primero)</span></label>
                       <input type="number" value={formData.orden} onChange={(e) => set("orden", e.target.value)}
