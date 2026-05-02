@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import UneteModal from "@/components/UneteModal";
+import { useLang } from "@/lang/LanguageContext";
 import {
   Globe,
   Leaf,
@@ -17,50 +18,8 @@ import {
   MapPinned,
 } from "lucide-react";
 
-// ── Los 3 pilares de impacto ────────────────────────────────
-const pilares = [
-  {
-    icono: TrafficCone,
-    titulo: "Menos tráfico",
-    descripcion:
-      "Cada viaje compartido reduce autos en las calles y alivia la congestión urbana de Lima. Una ciudad menos saturada es una ciudad donde todos vivimos mejor.",
-    punto: "Movilidad eficiente",
-  },
-  {
-    icono: Leaf,
-    titulo: "Menos contaminación",
-    descripcion:
-      "Compartir trayectos significa menos emisiones de CO₂ al ambiente. Construimos una ciudad más limpia y sostenible para las próximas generaciones.",
-    punto: "Ciudad más limpia",
-  },
-  {
-    icono: Users2,
-    titulo: "Más comunidad",
-    descripcion:
-      "Cada viaje es una oportunidad de conocer personas, generar conexiones y fortalecer el tejido social. TIVO une a quienes recorren el mismo camino.",
-    punto: "Conexiones humanas",
-  },
-];
-
-// ── Razones por las que TIVO importa ────────────────────────
-const razones = [
-  {
-    titulo: "Una movilidad más humana",
-    descripcion: "Donde las personas son lo más importante y el viaje se vuelve un encuentro.",
-  },
-  {
-    titulo: "Una ciudad más conectada",
-    descripcion: "Unimos los trayectos diarios para que nadie tenga que moverse solo.",
-  },
-  {
-    titulo: "Un transporte sostenible",
-    descripcion: "Compartir es la forma más inteligente de moverse por una ciudad saludable.",
-  },
-  {
-    titulo: "Una economía accesible",
-    descripcion: "Dividir costos hace que moverse bien no tenga que ser caro.",
-  },
-];
+// Iconos de los pilares (no se traducen)
+const ICONOS_PILARES = [TrafficCone, Leaf, Users2];
 
 const stagger = {
   hidden: {},
@@ -77,6 +36,9 @@ const cardItem = {
 };
 
 export default function ImpactoPage() {
+  const { t } = useLang();
+  const tIP = t.impactoPage;
+
   const [modalAbierto, setModalAbierto] = useState(false);
 
   const pilaresRef = useRef(null);
@@ -91,11 +53,11 @@ export default function ImpactoPage() {
       {/* HERO */}
       <PageHero
         image="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=85&auto=format&fit=crop"
-        title="Impacto y comunidad"
-        breadcrumb="Impacto"
+        title={tIP.hero.title}
+        breadcrumb={tIP.hero.breadcrumb}
       />
 
-      {/* ── INTRO: frase inspiradora ───────────────────────────── */}
+      {/* ── INTRO ───────────────────────────── */}
       <section className="py-16 lg:py-24 px-6 lg:px-10 bg-white">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
@@ -106,38 +68,35 @@ export default function ImpactoPage() {
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f6fb] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-5">
               <Globe className="w-3 h-3" />
-              Impacto y comunidad
+              {tIP.intro.badge}
             </span>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0e2a3d] mb-6 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Juntos movemos{" "}
-              <span className="text-[#0e4a6b] italic">la ciudad de otra forma</span>
+              {tIP.intro.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tIP.intro.tituloSpan}</span>
             </h2>
 
             <p className="text-[#4a6170] text-base md:text-lg leading-relaxed max-w-2xl mx-auto mb-4">
-              En TIVO creemos en una movilidad más humana, donde las personas son lo más importante.
-              No solo compartes un viaje: construyes comunidad.
+              {tIP.intro.descripcion}
             </p>
 
             <p className="text-[#1bb5e0] text-base md:text-lg italic" style={{ fontFamily: "Georgia, serif" }}>
-              Cada trayecto cuenta. Cada persona suma.
+              {tIP.intro.fraseItalic}
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── PILARES DE IMPACTO (fondo oscuro) ──────────────────── */}
+      {/* ── PILARES (fondo oscuro) ──────────────────── */}
       <section
         ref={pilaresRef}
         className="relative py-20 md:py-28 px-6 lg:px-10 overflow-hidden"
         style={{ background: "linear-gradient(135deg, #051e2e 0%, #0e4a6b 55%, #0f6998 100%)" }}
       >
 
-        {/* Orbes */}
         <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#1bb5e0]/20 blur-3xl pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[#4ac8e8]/15 blur-3xl pointer-events-none" />
 
-        {/* Patrón líneas onduladas */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.08] pointer-events-none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
           <defs>
             <pattern id="impactoPageWaves" x="0" y="0" width="200" height="140" patternUnits="userSpaceOnUse">
@@ -150,7 +109,6 @@ export default function ImpactoPage() {
 
         <div className="relative max-w-7xl mx-auto">
 
-          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={pilaresInView ? { opacity: 1, y: 0 } : {}}
@@ -162,28 +120,27 @@ export default function ImpactoPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ac8e8] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4ac8e8]"></span>
               </span>
-              Nuestro impacto
+              {tIP.pilares.badge}
             </span>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Tres formas de{" "}
-              <span className="text-[#7fdcf2] italic">transformar</span>
+              {tIP.pilares.titulo}{" "}
+              <span className="text-[#7fdcf2] italic">{tIP.pilares.tituloSpan}</span>
             </h2>
 
             <p className="text-white/75 text-base md:text-lg leading-relaxed">
-              Cada viaje compartido deja una huella positiva en la ciudad, el ambiente y las personas.
+              {tIP.pilares.subtitulo}
             </p>
           </motion.div>
 
-          {/* Grid de pilares */}
           <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
             variants={stagger}
             initial="hidden"
             animate={pilaresInView ? "visible" : "hidden"}
           >
-            {pilares.map((p, i) => {
-              const Icono = p.icono;
+            {tIP.pilares.items.map((p, i) => {
+              const Icono = ICONOS_PILARES[i];
               return (
                 <motion.div
                   key={i}
@@ -212,7 +169,6 @@ export default function ImpactoPage() {
             })}
           </motion.div>
 
-          {/* Frase inferior */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={pilaresInView ? { opacity: 1 } : {}}
@@ -220,17 +176,17 @@ export default function ImpactoPage() {
             className="text-center mt-14"
           >
             <p className="text-[#7fdcf2] text-lg md:text-xl italic max-w-2xl mx-auto" style={{ fontFamily: "Georgia, serif" }}>
-              "No solo compartes un viaje, construyes comunidad."
+              &quot;{tIP.pilares.fraseFinal}&quot;
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* ── POR QUÉ IMPORTA TIVO ──────────────────────────────── */}
+      {/* ── POR QUÉ IMPORTA ──────────────────────────────── */}
       <section ref={razonesRef} className="py-16 lg:py-24 px-6 lg:px-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Imagen emotiva */}
+          {/* Imagen */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={razonesInView ? { opacity: 1, x: 0 } : {}}
@@ -239,18 +195,15 @@ export default function ImpactoPage() {
           >
             <div className="relative max-w-md mx-auto">
 
-              {/* Resplandor decorativo detrás */}
               <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl pointer-events-none" />
 
-              {/* Imagen principal */}
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/25 border-4 border-white">
                 <img
                   src="/img1.jpg"
-                  alt="Comunidad moviéndose junta por la ciudad"
+                  alt={tIP.razones.imagenAlt}
                   className="w-full h-full object-cover"
                 />
 
-                {/* Degradado para integrar con la paleta */}
                 <div
                   className="absolute inset-0"
                   style={{
@@ -260,7 +213,6 @@ export default function ImpactoPage() {
                 />
               </div>
 
-              {/* Badges flotantes alrededor de la imagen */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={razonesInView ? { opacity: 1, y: 0 } : {}}
@@ -270,7 +222,7 @@ export default function ImpactoPage() {
                 <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
                   <Car className="w-4 h-4 text-[#1bb5e0]" />
                 </div>
-                <span className="text-[11px] font-bold text-[#0e2a3d]">Menos autos</span>
+                <span className="text-[11px] font-bold text-[#0e2a3d]">{tIP.razones.badges.menosAutos}</span>
               </motion.div>
 
               <motion.div
@@ -282,7 +234,7 @@ export default function ImpactoPage() {
                 <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
                   <Heart className="w-4 h-4 text-[#1bb5e0] fill-[#1bb5e0]" />
                 </div>
-                <span className="text-[11px] font-bold text-[#0e2a3d]">Más conexión</span>
+                <span className="text-[11px] font-bold text-[#0e2a3d]">{tIP.razones.badges.masConexion}</span>
               </motion.div>
 
               <motion.div
@@ -294,7 +246,7 @@ export default function ImpactoPage() {
                 <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
                   <Leaf className="w-4 h-4 text-[#1bb5e0]" />
                 </div>
-                <span className="text-[11px] font-bold text-[#0e2a3d]">Ciudad verde</span>
+                <span className="text-[11px] font-bold text-[#0e2a3d]">{tIP.razones.badges.ciudadVerde}</span>
               </motion.div>
 
               <motion.div
@@ -306,12 +258,12 @@ export default function ImpactoPage() {
                 <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
                   <Users2 className="w-4 h-4 text-[#1bb5e0]" />
                 </div>
-                <span className="text-[11px] font-bold text-[#0e2a3d]">Comunidad</span>
+                <span className="text-[11px] font-bold text-[#0e2a3d]">{tIP.razones.badges.comunidad}</span>
               </motion.div>
             </div>
           </motion.div>
 
-          {/* Texto con razones */}
+          {/* Texto */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={razonesInView ? { opacity: 1, x: 0 } : {}}
@@ -320,21 +272,20 @@ export default function ImpactoPage() {
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f6fb] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-5">
               <Sparkles className="w-3 h-3" />
-              Por qué importa TIVO
+              {tIP.razones.badge}
             </span>
 
             <h2 className="text-3xl md:text-4xl font-bold text-[#0e2a3d] mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Cambiar la forma{" "}
-              <span className="text-[#0e4a6b] italic">de moverse</span>
+              {tIP.razones.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tIP.razones.tituloSpan}</span>
             </h2>
 
             <p className="text-[#4a6170] text-base leading-relaxed mb-7">
-              TIVO no es solo una app: es una nueva manera de entender el transporte urbano. Una que
-              pone a las personas en el centro y deja una huella positiva en todo lo que hacemos.
+              {tIP.razones.descripcion}
             </p>
 
             <div className="flex flex-col gap-3">
-              {razones.map((r, i) => (
+              {tIP.razones.items.map((r, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: 20 }}
@@ -375,13 +326,12 @@ export default function ImpactoPage() {
             </div>
 
             <h2 className="text-3xl md:text-4xl font-bold text-[#0e2a3d] mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Sé parte del{" "}
-              <span className="text-[#0e4a6b] italic">cambio</span>
+              {tIP.cta.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tIP.cta.tituloSpan}</span>
             </h2>
 
             <p className="text-[#4a6170] text-base md:text-lg mb-8 max-w-xl mx-auto">
-              Cada persona que se une a TIVO es un paso hacia una ciudad más humana, más limpia y
-              más conectada. ¿Te sumas?
+              {tIP.cta.descripcion}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -389,7 +339,7 @@ export default function ImpactoPage() {
                 onClick={() => setModalAbierto(true)}
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0e4a6b] hover:bg-[#0b3a56] text-white text-sm font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
               >
-                Únete a TIVO
+                {tIP.cta.botonPrimario}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
               <Link
@@ -397,7 +347,7 @@ export default function ImpactoPage() {
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-[#cfe7f4] hover:border-[#1bb5e0] text-[#0e4a6b] text-sm font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5"
               >
                 <MapPinned className="w-4 h-4" />
-                Reserva tu viaje
+                {tIP.cta.botonSecundario}
               </Link>
             </div>
           </motion.div>

@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { useLang } from "@/lang/LanguageContext";
 
-// ── SVGs inline de redes sociales (evita problemas de compatibilidad con lucide-react) ──
+// ── SVGs inline de redes sociales ──
 const FacebookIcon = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -31,22 +32,7 @@ const LinkedinIcon = (props) => (
   </svg>
 );
 
-// ── Enlaces con rutas propias (no anclas) ──
-const enlaces = {
-  navegacion: [
-    { nombre: "Inicio",        href: "/" },
-    { nombre: "Nosotros",      href: "/nosotros" },
-    { nombre: "Reservas",      href: "/reservas" },
-    { nombre: "Cómo funciona", href: "/como-funciona" },
-    { nombre: "Testimonios",   href: "/testimonios" },
-    { nombre: "Contáctanos",   href: "/contactanos" },
-  ],
-  ventajas: [
-    { nombre: "Confianza y seguridad", href: "/seguridad" },
-    { nombre: "Impacto y comunidad",   href: "/impacto" },
-  ],
-};
-
+// Las redes sociales no se traducen (solo el icono y el href)
 const redes = [
   { icono: FacebookIcon,  href: "#", label: "Facebook" },
   { icono: InstagramIcon, href: "#", label: "Instagram" },
@@ -55,6 +41,9 @@ const redes = [
 ];
 
 export default function Footer() {
+  const { t } = useLang();
+  const tF = t.footer;
+
   return (
     <footer
       className="relative overflow-hidden"
@@ -71,22 +60,20 @@ export default function Footer() {
         <rect width="100%" height="100%" fill="url(#footerWaves)" />
       </svg>
 
-      {/* Orbes decorativos */}
       <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#1bb5e0]/10 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-[#4ac8e8]/10 blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-6 lg:px-10 pt-16 pb-8">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-10 mb-12">
 
           {/* Columna marca */}
-          <div className="lg:col-span-2">
+          <div className="sm:col-span-2 lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 group mb-5 w-fit">
-              {/* Logo desde /public/logo.png (igual que Navbar) */}
               <div className="relative w-12 h-12 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
                 <Image
                   src="/logo.png"
-                  alt="TIVO"
+                  alt={tF.logo.nombre}
                   width={48}
                   height={48}
                   className="w-full h-full object-contain"
@@ -98,10 +85,10 @@ export default function Footer() {
                   className="block font-bold text-xl text-white tracking-wide"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
-                  TIVO
+                  {tF.logo.nombre}
                 </span>
                 <span className="block text-[10px] font-semibold tracking-widest uppercase text-[#7fdcf2]">
-                  Movilidad compartida
+                  {tF.logo.slogan}
                 </span>
               </div>
             </Link>
@@ -110,14 +97,13 @@ export default function Footer() {
               className="text-white/60 text-sm leading-relaxed mb-6 max-w-sm italic"
               style={{ fontFamily: "Georgia, serif" }}
             >
-              "Compartimos más que un viaje"
+              &quot;{tF.fraseItalic}&quot;
             </p>
 
             <p className="text-white/50 text-sm leading-relaxed mb-6 max-w-sm">
-              Una plataforma de movilidad compartida que conecta a personas que desean trasladarse de forma segura, económica y confiable.
+              {tF.descripcion}
             </p>
 
-            {/* Redes sociales */}
             <div className="flex items-center gap-3">
               {redes.map((r) => {
                 const Icono = r.icono;
@@ -138,10 +124,10 @@ export default function Footer() {
           {/* Columna navegación */}
           <div>
             <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Navegación
+              {tF.titulos.navegacion}
             </h4>
             <ul className="flex flex-col gap-2.5">
-              {enlaces.navegacion.map((e) => (
+              {tF.navegacion.map((e) => (
                 <li key={e.href}>
                   <Link href={e.href} className="text-sm text-white/55 hover:text-[#7fdcf2] transition-colors">
                     {e.nombre}
@@ -154,10 +140,10 @@ export default function Footer() {
           {/* Columna descubre */}
           <div>
             <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Descubre
+              {tF.titulos.descubre}
             </h4>
             <ul className="flex flex-col gap-2.5">
-              {enlaces.ventajas.map((e) => (
+              {tF.ventajas.map((e) => (
                 <li key={e.href}>
                   <Link href={e.href} className="text-sm text-white/55 hover:text-[#7fdcf2] transition-colors">
                     {e.nombre}
@@ -167,10 +153,38 @@ export default function Footer() {
             </ul>
           </div>
 
+          {/* Columna servicio al cliente */}
+          <div>
+            <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-4" style={{ fontFamily: "Georgia, serif" }}>
+              {tF.titulos.servicio}
+            </h4>
+            <ul className="flex flex-col gap-2.5">
+              {tF.servicio.map((e) => (
+                <li key={e.href}>
+                  <Link href={e.href} className="text-sm text-white/55 hover:text-[#7fdcf2] transition-colors">
+                    {e.nombre}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href="/libro-de-reclamaciones"
+              className="mt-5 inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/15 hover:bg-white/10 hover:border-[#7fdcf2]/40 transition-all duration-200 group"
+            >
+              <svg className="w-4 h-4 text-[#7fdcf2]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-white/80 group-hover:text-white">
+                {tF.selloLibro}
+              </span>
+            </Link>
+          </div>
+
           {/* Columna contacto */}
           <div>
             <h4 className="text-white text-sm font-bold uppercase tracking-widest mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Contacto
+              {tF.titulos.contacto}
             </h4>
             <ul className="flex flex-col gap-3">
               <li className="flex items-start gap-2.5 text-sm text-white/55">
@@ -187,17 +201,31 @@ export default function Footer() {
               </li>
               <li className="flex items-start gap-2.5 text-sm text-white/55">
                 <MapPin className="w-4 h-4 text-[#1bb5e0] mt-0.5 flex-shrink-0" />
-                <span>Lima, Perú</span>
+                <span>{tF.ubicacion}</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Barra inferior */}
-        <div className="pt-8 border-t border-white/10 flex items-center justify-center">
-          <p className="text-xs text-white/40 text-center">
-            © {new Date().getFullYear()} TIVO. Todos los derechos reservados.
+        <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/40 text-center sm:text-left">
+            © {new Date().getFullYear()} TIVO. {tF.copyright}
           </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-white/40">
+            <Link href="/terminos-y-condiciones" className="hover:text-[#7fdcf2] transition-colors">
+              {tF.enlacesRapidos.terminos}
+            </Link>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <Link href="/politica-de-privacidad" className="hover:text-[#7fdcf2] transition-colors">
+              {tF.enlacesRapidos.privacidad}
+            </Link>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <Link href="/preguntas-frecuentes" className="hover:text-[#7fdcf2] transition-colors">
+              {tF.enlacesRapidos.faq}
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

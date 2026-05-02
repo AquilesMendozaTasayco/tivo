@@ -3,14 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import UneteModal from "./UneteModal";
-
-// ── Dropdown estático de Ventajas ─────────────────────────────
-const ventajas = [
-  { nombre: "Confianza y seguridad", href: "/seguridad" },
-  { nombre: "Impacto y comunidad",   href: "/impacto" },
-];
+import { useLang } from "@/lang/LanguageContext";
+import LanguageSwitcher from "@/lang/LanguageSwitcher";
 
 export default function Navbar() {
+  const { t } = useLang();
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [dropdownAbierto, setDropdownAbierto] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -29,6 +26,8 @@ export default function Navbar() {
     setMenuAbierto(false);
   };
 
+  const tNav = t.navbar;
+
   return (
     <>
       <nav
@@ -36,56 +35,55 @@ export default function Navbar() {
           isTransparent ? "bg-transparent shadow-none" : "bg-white shadow-md"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10">
-          <div className="flex items-center justify-between h-20">
+        <div className="max-w-[1400px] mx-auto px-4 lg:px-6 xl:px-8">
+          <div className="flex items-center justify-between h-20 gap-3">
 
             {/* ── LOGO + TEXTO ── */}
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative w-12 h-12 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+            <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
+              <div className="relative w-11 h-11 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 flex-shrink-0">
                 <img
                   src="/logo.png"
-                  alt="TIVO"
-                  width={48}
-                  height={48}
+                  alt={tNav.logo.nombre}
+                  width={44}
+                  height={44}
                   className={`w-full h-full object-contain transition-all duration-500 ${
-                    isTransparent
-                      ? "brightness-0 invert"
-                      : "brightness-100 invert-0"
+                    isTransparent ? "brightness-0 invert" : "brightness-100 invert-0"
                   }`}
                 />
               </div>
-              <div className="leading-tight">
+              <div className="leading-tight hidden sm:block">
                 <span
-                  className={`block font-bold text-lg tracking-wide transition-colors duration-500 ${
+                  className={`block font-bold text-base lg:text-lg tracking-wide transition-colors duration-500 ${
                     isTransparent ? "text-white" : "text-[#0e4a6b]"
                   }`}
                   style={{ fontFamily: "Georgia, serif" }}
                 >
-                  TIVO
+                  {tNav.logo.nombre}
                 </span>
+                {/* Slogan: oculto en lg, visible en xl+ para no ocupar espacio del menú */}
                 <span
-                  className={`block text-[10px] font-semibold tracking-widest uppercase transition-colors duration-500 ${
+                  className={`hidden xl:block text-[9px] font-semibold tracking-widest uppercase transition-colors duration-500 whitespace-nowrap ${
                     isTransparent ? "text-white/70" : "text-[#1bb5e0]"
                   }`}
                 >
-                  Movilidad compartida
+                  {tNav.logo.slogan}
                 </span>
               </div>
             </Link>
 
             {/* ── MENÚ DESKTOP ── */}
-            <ul className="hidden lg:flex items-center gap-1">
+            <ul className="hidden lg:flex items-center gap-0.5 flex-1 justify-end">
               {/* Inicio */}
               <li>
                 <Link
                   href="/"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Inicio
+                  {tNav.menu.inicio}
                 </Link>
               </li>
 
@@ -96,15 +94,15 @@ export default function Navbar() {
                 onMouseLeave={() => setDropdownAbierto(false)}
               >
                 <button
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`flex items-center gap-1 px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Ventajas
+                  {tNav.menu.ventajas}
                   <svg
-                    className={`w-4 h-4 transition-transform duration-200 ${dropdownAbierto ? "rotate-180" : ""}`}
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownAbierto ? "rotate-180" : ""}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -120,7 +118,7 @@ export default function Navbar() {
                   }`}
                 >
                   <div className="py-2">
-                    {ventajas.map((v) => (
+                    {tNav.ventajas.map((v) => (
                       <Link
                         key={v.href}
                         href={v.href}
@@ -138,13 +136,13 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/nosotros"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Nosotros
+                  {tNav.menu.nosotros}
                 </Link>
               </li>
 
@@ -152,13 +150,13 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/reservas"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Reservas
+                  {tNav.menu.reservas}
                 </Link>
               </li>
 
@@ -166,13 +164,13 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/testimonios"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Testimonios
+                  {tNav.menu.testimonios}
                 </Link>
               </li>
 
@@ -180,13 +178,13 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/como-funciona"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Cómo funciona
+                  {tNav.menu.comoFunciona}
                 </Link>
               </li>
 
@@ -194,47 +192,56 @@ export default function Navbar() {
               <li>
                 <Link
                   href="/contactanos"
-                  className={`px-3 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-white hover:bg-white/15"
                       : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
                   }`}
                 >
-                  Contáctanos
+                  {tNav.menu.contactanos}
                 </Link>
               </li>
 
-              {/* CTA Únete a TIVO — abre modal */}
+              {/* ── SELECTOR DE IDIOMA ── */}
+              <li className="ml-1.5">
+                <LanguageSwitcher variant={isTransparent ? "light" : "dark"} />
+              </li>
+
+              {/* CTA Únete a TIVO */}
               <li>
                 <button
                   onClick={abrirModal}
-                  className={`ml-2 px-5 py-2.5 text-sm font-semibold rounded-full transition-all duration-200 ${
+                  className={`ml-1.5 px-4 py-2 text-[13px] font-semibold rounded-full transition-all duration-200 whitespace-nowrap ${
                     isTransparent
                       ? "text-[#0e4a6b] bg-white hover:bg-white/90"
                       : "text-white bg-[#0e4a6b] hover:bg-[#0b3a56]"
                   }`}
                 >
-                  Únete a TIVO
+                  {tNav.cta}
                 </button>
               </li>
             </ul>
 
-            {/* ── BOTÓN HAMBURGUESA MOBILE ── */}
-            <button
-              className={`lg:hidden p-2 rounded-lg transition-colors ${
-                isTransparent ? "text-white hover:bg-white/15" : "text-[#0e4a6b] hover:bg-[#e8f6fb]"
-              }`}
-              onClick={() => setMenuAbierto(!menuAbierto)}
-              aria-label="Abrir menú"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {menuAbierto ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+            {/* ── MOBILE: SELECTOR + HAMBURGUESA ── */}
+            <div className="lg:hidden flex items-center gap-2">
+              <LanguageSwitcher variant={isTransparent ? "light" : "dark"} compact />
+
+              <button
+                className={`p-2 rounded-lg transition-colors ${
+                  isTransparent ? "text-white hover:bg-white/15" : "text-[#0e4a6b] hover:bg-[#e8f6fb]"
+                }`}
+                onClick={() => setMenuAbierto(!menuAbierto)}
+                aria-label={menuAbierto ? tNav.aria.cerrarMenu : tNav.aria.abrirMenu}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {menuAbierto ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -250,7 +257,7 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Inicio
+              {tNav.menu.inicio}
             </Link>
 
             <div>
@@ -258,7 +265,7 @@ export default function Navbar() {
                 className="w-full flex items-center justify-between px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
                 onClick={() => setDropdownAbierto(!dropdownAbierto)}
               >
-                Ventajas
+                {tNav.menu.ventajas}
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 ${dropdownAbierto ? "rotate-180" : ""}`}
                   fill="none"
@@ -270,7 +277,7 @@ export default function Navbar() {
               </button>
               {dropdownAbierto && (
                 <div className="mt-1 ml-3 pl-3 border-l-2 border-[#1bb5e0] flex flex-col gap-1">
-                  {ventajas.map((v) => (
+                  {tNav.ventajas.map((v) => (
                     <Link
                       key={v.href}
                       href={v.href}
@@ -289,7 +296,7 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Nosotros
+              {tNav.menu.nosotros}
             </Link>
 
             <Link
@@ -297,7 +304,7 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Reservas
+              {tNav.menu.reservas}
             </Link>
 
             <Link
@@ -305,7 +312,7 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Testimonios
+              {tNav.menu.testimonios}
             </Link>
 
             <Link
@@ -313,7 +320,7 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Cómo funciona
+              {tNav.menu.comoFunciona}
             </Link>
 
             <Link
@@ -321,14 +328,14 @@ export default function Navbar() {
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
               onClick={() => setMenuAbierto(false)}
             >
-              Contáctanos
+              {tNav.menu.contactanos}
             </Link>
 
             <button
               onClick={abrirModal}
               className="mt-2 px-3 py-3 text-sm font-semibold text-white bg-[#0e4a6b] hover:bg-[#0b3a56] rounded-full text-center transition-all"
             >
-              Únete a TIVO
+              {tNav.cta}
             </button>
           </div>
         </div>

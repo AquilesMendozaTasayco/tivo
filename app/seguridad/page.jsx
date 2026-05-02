@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import UneteModal from "@/components/UneteModal";
+import { useLang } from "@/lang/LanguageContext";
 import {
   ShieldCheck,
   UserCheck,
@@ -18,53 +19,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 
-// ── Features principales de seguridad ────────────────────────
-const features = [
-  {
-    icono: UserCheck,
-    titulo: "Usuarios verificados",
-    descripcion:
-      "Todos los miembros de TIVO pasan por un riguroso proceso de verificación de identidad antes de poder viajar.",
-    items: [
-      "Validación de documento de identidad",
-      "Verificación de número telefónico",
-      "Confirmación de correo electrónico",
-      "Revisión manual del equipo TIVO",
-    ],
-  },
-  {
-    icono: Star,
-    titulo: "Sistema de calificaciones",
-    descripcion:
-      "Revisa perfiles, comentarios y puntuaciones antes de elegir con quién viajar. Construye tu reputación viaje a viaje.",
-    items: [
-      "Calificación de 1 a 5 estrellas",
-      "Comentarios de viajes anteriores",
-      "Historial público de cada usuario",
-      "Reseñas auténticas y verificadas",
-    ],
-  },
-  {
-    icono: Lock,
-    titulo: "Protección de datos",
-    descripcion:
-      "Tu información personal está protegida con estándares de seguridad digital. Nosotros cuidamos lo que confías.",
-    items: [
-      "Conexiones encriptadas",
-      "Datos personales resguardados",
-      "Control sobre tu información",
-      "Privacidad como prioridad",
-    ],
-  },
-];
-
-// ── Compromisos de TIVO contigo ──────────────────────────────
-const compromisos = [
-  { texto: "Verificamos a cada usuario antes de habilitar viajes" },
-  { texto: "Respondemos a reportes con máxima prioridad" },
-  { texto: "Capacitamos al equipo en protocolos de seguridad" },
-  { texto: "Revisamos continuamente nuestros procesos de seguridad" },
-];
+// Iconos de los features (no se traducen)
+const ICONOS_FEATURES = [UserCheck, Star, Lock];
 
 const stagger = {
   hidden: {},
@@ -81,6 +37,9 @@ const cardItem = {
 };
 
 export default function SeguridadPage() {
+  const { t } = useLang();
+  const tSP = t.seguridadPage;
+
   const [modalAbierto, setModalAbierto] = useState(false);
 
   const featuresRef = useRef(null);
@@ -95,11 +54,11 @@ export default function SeguridadPage() {
       {/* HERO */}
       <PageHero
         image="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=85&auto=format&fit=crop"
-        title="Confianza y seguridad"
-        breadcrumb="Seguridad"
+        title={tSP.hero.title}
+        breadcrumb={tSP.hero.breadcrumb}
       />
 
-      {/* ── SECCIÓN INTRO CON IMAGEN ─────────────────────── */}
+      {/* ── INTRO CON IMAGEN ─────────────────────── */}
       <section className="py-16 lg:py-24 px-6 lg:px-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
@@ -112,34 +71,32 @@ export default function SeguridadPage() {
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f6fb] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-5">
               <ShieldCheck className="w-3 h-3" />
-              Ventaja · Confianza y seguridad
+              {tSP.intro.badge}
             </span>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0e2a3d] mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Tu tranquilidad es{" "}
-              <span className="text-[#0e4a6b] italic">parte del viaje</span>
+              {tSP.intro.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tSP.intro.tituloSpan}</span>
             </h2>
 
             <p className="text-[#4a6170] text-base md:text-lg leading-relaxed mb-4">
-              Sabemos que compartir un viaje es compartir tu espacio. Por eso, en TIVO todos los
-              usuarios pasan por un proceso de verificación antes de poder participar en la plataforma.
+              {tSP.intro.parrafo1}
             </p>
 
             <p className="text-[#4a6170] text-base md:text-lg leading-relaxed mb-8">
-              Además, puedes revisar calificaciones, comentarios y elegir siempre con quién viajar.
-              Nos preocupamos por ti en cada trayecto.
+              {tSP.intro.parrafo2}
             </p>
 
             <Link
               href="/como-funciona"
               className="group inline-flex items-center gap-2 px-6 py-3 bg-[#0e4a6b] hover:bg-[#0b3a56] text-white text-sm font-semibold rounded-full transition-all duration-200 hover:-translate-y-0.5 shadow-md"
             >
-              Conoce cómo funciona
+              {tSP.intro.botonConoce}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </motion.div>
 
-          {/* Imagen emotiva */}
+          {/* Imagen */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -149,18 +106,15 @@ export default function SeguridadPage() {
           >
             <div className="relative max-w-md mx-auto">
 
-              {/* Resplandor decorativo detrás */}
               <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl pointer-events-none" />
 
-              {/* Imagen */}
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/25 border-4 border-white">
                 <img
                   src="/img5.jpg"
-                  alt="Persona viajando con tranquilidad"
+                  alt={tSP.intro.imagenAlt}
                   className="w-full h-full object-cover"
                 />
 
-                {/* Degradado sutil para integrar con la paleta */}
                 <div
                   className="absolute inset-0"
                   style={{
@@ -170,7 +124,7 @@ export default function SeguridadPage() {
                 />
               </div>
 
-              {/* Badge flotante: Verificado */}
+              {/* Badge: Verificado */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -182,12 +136,12 @@ export default function SeguridadPage() {
                   <UserCheck className="w-5 h-5 text-[#1bb5e0]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">Verificado</p>
-                  <p className="text-[11px] text-[#4a6170]">Perfil aprobado</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">{tSP.intro.badges.verificado.titulo}</p>
+                  <p className="text-[11px] text-[#4a6170]">{tSP.intro.badges.verificado.subtitulo}</p>
                 </div>
               </motion.div>
 
-              {/* Badge flotante: Calificación */}
+              {/* Badge: Calificación */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -199,12 +153,12 @@ export default function SeguridadPage() {
                   <Star className="w-5 h-5 text-[#1bb5e0] fill-[#1bb5e0]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">Calificación</p>
-                  <p className="text-[11px] text-[#4a6170]">Reseñas reales</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">{tSP.intro.badges.calificacion.titulo}</p>
+                  <p className="text-[11px] text-[#4a6170]">{tSP.intro.badges.calificacion.subtitulo}</p>
                 </div>
               </motion.div>
 
-              {/* Badge flotante: Protegido */}
+              {/* Badge: Protegido */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -216,8 +170,8 @@ export default function SeguridadPage() {
                   <Lock className="w-5 h-5 text-[#1bb5e0]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">Protegido</p>
-                  <p className="text-[11px] text-[#4a6170]">Datos seguros</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">{tSP.intro.badges.protegido.titulo}</p>
+                  <p className="text-[11px] text-[#4a6170]">{tSP.intro.badges.protegido.subtitulo}</p>
                 </div>
               </motion.div>
             </div>
@@ -225,7 +179,7 @@ export default function SeguridadPage() {
         </div>
       </section>
 
-      {/* ── FEATURES DETALLADAS ──────────────────────────────── */}
+      {/* ── FEATURES ──────────────────────────────── */}
       <section ref={featuresRef} className="py-16 lg:py-20 px-6 lg:px-10 bg-[#f5fbfe] relative overflow-hidden">
 
         <div className="absolute top-10 left-0 w-72 h-72 rounded-full bg-[#d4eef9] blur-3xl pointer-events-none" />
@@ -236,14 +190,14 @@ export default function SeguridadPage() {
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1bb5e0]" />
-              Cómo te protegemos
+              {tSP.features.badge}
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-[#0e2a3d] mb-4" style={{ fontFamily: "Georgia, serif" }}>
-              Tres pilares de{" "}
-              <span className="text-[#0e4a6b] italic">confianza</span>
+              {tSP.features.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tSP.features.tituloSpan}</span>
             </h2>
             <p className="text-[#4a6170] text-base md:text-lg">
-              Cada medida está pensada para que viajes con la tranquilidad que mereces.
+              {tSP.features.subtitulo}
             </p>
           </div>
 
@@ -253,8 +207,8 @@ export default function SeguridadPage() {
             initial="hidden"
             animate={featuresInView ? "visible" : "hidden"}
           >
-            {features.map((f, i) => {
-              const Icono = f.icono;
+            {tSP.features.items.map((f, i) => {
+              const Icono = ICONOS_FEATURES[i];
               return (
                 <motion.div
                   key={i}
@@ -290,7 +244,7 @@ export default function SeguridadPage() {
         </div>
       </section>
 
-      {/* ── NUESTRO COMPROMISO ──────────────────────────────── */}
+      {/* ── COMPROMISO ──────────────────────────────── */}
       <section ref={compromisoRef} className="py-16 lg:py-20 px-6 lg:px-10 bg-white">
         <div className="max-w-5xl mx-auto">
 
@@ -300,7 +254,6 @@ export default function SeguridadPage() {
             animate={compromisoInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7 }}
           >
-            {/* Decoración */}
             <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#e8f6fb] blur-3xl pointer-events-none" />
 
             <div className="relative grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -308,21 +261,20 @@ export default function SeguridadPage() {
               <div>
                 <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f6fb] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-4">
                   <Eye className="w-3 h-3" />
-                  Nuestro compromiso
+                  {tSP.compromiso.badge}
                 </span>
 
                 <h2 className="text-2xl md:text-3xl font-bold text-[#0e2a3d] mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-                  Contigo en cada viaje
+                  {tSP.compromiso.titulo}
                 </h2>
 
                 <p className="text-[#4a6170] text-sm md:text-base leading-relaxed">
-                  La seguridad no es una función más: es el corazón de TIVO. Estos son los compromisos
-                  que asumimos con cada persona que confía en nuestra plataforma.
+                  {tSP.compromiso.descripcion}
                 </p>
               </div>
 
               <ul className="flex flex-col gap-3">
-                {compromisos.map((c, i) => (
+                {tSP.compromiso.items.map((texto, i) => (
                   <motion.li
                     key={i}
                     initial={{ opacity: 0, x: 20 }}
@@ -331,7 +283,7 @@ export default function SeguridadPage() {
                     className="flex items-start gap-3 p-3 rounded-xl bg-[#f5fbfe] border border-[#e8f4fa]"
                   >
                     <CheckCircle2 className="w-5 h-5 text-[#1bb5e0] mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-[#0e2a3d] font-medium">{c.texto}</span>
+                    <span className="text-sm text-[#0e2a3d] font-medium">{texto}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -355,12 +307,12 @@ export default function SeguridadPage() {
             </div>
 
             <h2 className="text-3xl md:text-4xl font-bold text-[#0e2a3d] mb-4 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Viaja con{" "}
-              <span className="text-[#0e4a6b] italic">tranquilidad</span>
+              {tSP.cta.titulo}{" "}
+              <span className="text-[#0e4a6b] italic">{tSP.cta.tituloSpan}</span>
             </h2>
 
             <p className="text-[#4a6170] text-base md:text-lg mb-8 max-w-xl mx-auto">
-              Súmate a la comunidad de personas que ya están moviéndose de forma más segura por Lima.
+              {tSP.cta.descripcion}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -368,7 +320,7 @@ export default function SeguridadPage() {
                 onClick={() => setModalAbierto(true)}
                 className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-[#0e4a6b] hover:bg-[#0b3a56] text-white text-sm font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5 shadow-lg"
               >
-                Únete a TIVO
+                {tSP.cta.botonPrimario}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
               <Link
@@ -376,7 +328,7 @@ export default function SeguridadPage() {
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-white border border-[#cfe7f4] hover:border-[#1bb5e0] text-[#0e4a6b] text-sm font-bold rounded-full transition-all duration-200 hover:-translate-y-0.5"
               >
                 <MessageCircle className="w-4 h-4" />
-                Contáctanos
+                {tSP.cta.botonSecundario}
               </Link>
             </div>
           </motion.div>

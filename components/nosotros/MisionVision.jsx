@@ -2,8 +2,12 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useLang } from "@/lang/LanguageContext";
 
 export default function MisionVision() {
+  const { t } = useLang();
+  const tMV = t.misionVision;
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
@@ -14,19 +18,18 @@ export default function MisionVision() {
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=85&auto=format&fit=crop"
-          alt="Ciudad de noche"
+          alt={tMV.imagenAlt}
           className="w-full h-full object-cover"
           onError={(e) => {
             e.target.src =
               "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=85&auto=format&fit=crop";
           }}
         />
-        {/* Degradado azul oscuro */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#051e2e]/92 via-[#0e4a6b]/88 to-[#0f6998]/80" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#051e2e]/60 via-transparent to-[#051e2e]/40" />
       </div>
 
-      {/* Patrón decorativo: líneas onduladas */}
+      {/* Patrón decorativo */}
       <svg className="absolute inset-0 z-[1] opacity-[0.06] pointer-events-none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
         <defs>
           <pattern id="mvWaves" x="0" y="0" width="200" height="140" patternUnits="userSpaceOnUse">
@@ -37,11 +40,9 @@ export default function MisionVision() {
         <rect width="100%" height="100%" fill="url(#mvWaves)" />
       </svg>
 
-      {/* Orbes decorativos */}
       <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] rounded-full bg-[#1bb5e0]/15 blur-3xl pointer-events-none z-[1]" />
       <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] rounded-full bg-[#4ac8e8]/10 blur-3xl pointer-events-none z-[1]" />
 
-      {/* CONTENIDO */}
       <div className="relative z-10 max-w-7xl mx-auto flex flex-col items-center gap-12">
 
         {/* ENCABEZADO */}
@@ -56,7 +57,7 @@ export default function MisionVision() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4ac8e8] opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#4ac8e8]"></span>
             </span>
-            Nuestra esencia
+            {tMV.badge}
           </motion.span>
 
           <motion.h2
@@ -66,8 +67,8 @@ export default function MisionVision() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
           >
-            Lo que nos{" "}
-            <span className="text-[#7fdcf2] italic">mueve y nos guía</span>
+            {tMV.tituloPre}{" "}
+            <span className="text-[#7fdcf2] italic">{tMV.tituloDestacado}</span>
           </motion.h2>
 
           <motion.div
@@ -92,45 +93,31 @@ export default function MisionVision() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Brillo de esquina */}
             <div className="absolute top-0 left-0 w-32 h-32 bg-[#4ac8e8]/15 rounded-full blur-2xl -translate-x-8 -translate-y-8 pointer-events-none" />
 
-            {/* Icono — Ruta / destino */}
             <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 text-[#7fdcf2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7}
-                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m0 13l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-10l6-3m0 13l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4" />
               </svg>
             </div>
 
-            {/* Etiqueta */}
             <span className="text-xs font-bold text-[#7fdcf2] uppercase tracking-widest">
-              Misión
+              {tMV.mision.etiqueta}
             </span>
 
-            {/* Título */}
-            <h3
-              className="text-xl md:text-2xl font-bold text-white leading-snug"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              Movilidad segura, accesible y confiable
+            <h3 className="text-xl md:text-2xl font-bold text-white leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+              {tMV.mision.titulo}
             </h3>
 
-            {/* Texto — EXACTO del PDF */}
             <p className="text-white/75 text-sm md:text-base leading-relaxed flex-1">
-              Ofrecer movilidad compartida segura, accesible y confiable mediante una plataforma
-              tecnológica que conecta usuarios verificados y conductores, mejorando la experiencia
-              de transporte urbano.
+              {tMV.mision.texto}
             </p>
 
-            {/* Línea decorativa inferior */}
             <div className="w-full h-px bg-gradient-to-r from-[#4ac8e8]/40 via-[#1bb5e0]/20 to-transparent" />
 
-            {/* Pie */}
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#4ac8e8]" />
-              <span className="text-xs text-white/50 font-medium">TIVO · Movilidad compartida</span>
+              <span className="text-xs text-white/50 font-medium">{tMV.pieMarca}</span>
             </div>
           </motion.div>
 
@@ -141,47 +128,32 @@ export default function MisionVision() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.65, delay: 0.38, ease: [0.22, 1, 0.36, 1] }}
           >
-            {/* Brillo de esquina */}
             <div className="absolute bottom-0 right-0 w-32 h-32 bg-[#1bb5e0]/20 rounded-full blur-2xl translate-x-8 translate-y-8 pointer-events-none" />
 
-            {/* Icono — Ojo / visión */}
             <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/20 flex items-center justify-center flex-shrink-0">
               <svg className="w-6 h-6 text-[#7fdcf2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7}
-                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7}
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.7} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
             </div>
 
-            {/* Etiqueta */}
             <span className="text-xs font-bold text-[#7fdcf2] uppercase tracking-widest">
-              Visión
+              {tMV.vision.etiqueta}
             </span>
 
-            {/* Título */}
-            <h3
-              className="text-xl md:text-2xl font-bold text-white leading-snug"
-              style={{ fontFamily: "Georgia, serif" }}
-            >
-              Ser la plataforma líder en Lima
+            <h3 className="text-xl md:text-2xl font-bold text-white leading-snug" style={{ fontFamily: "Georgia, serif" }}>
+              {tMV.vision.titulo}
             </h3>
 
-            {/* Texto — EXACTO del PDF */}
             <p className="text-white/75 text-sm md:text-base leading-relaxed flex-1">
-              Ser la plataforma líder de movilidad compartida en Lima, reconocida por su seguridad,
-              innovación y enfoque humano.
+              {tMV.vision.texto}
             </p>
 
-            {/* Línea decorativa inferior */}
             <div className="w-full h-px bg-gradient-to-r from-[#4ac8e8]/40 via-[#1bb5e0]/20 to-transparent" />
 
-            {/* Pie */}
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#4ac8e8]" />
-              <span className="text-xs text-white/50 font-medium">TIVO · Movilidad compartida</span>
+              <span className="text-xs text-white/50 font-medium">{tMV.pieMarca}</span>
             </div>
           </motion.div>
 

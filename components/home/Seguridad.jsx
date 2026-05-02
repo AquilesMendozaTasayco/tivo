@@ -2,36 +2,22 @@
 
 import { ShieldCheck, UserCheck, Star, Lock } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLang } from "@/lang/LanguageContext";
 
-const features = [
-  {
-    icono: UserCheck,
-    titulo: "Usuarios verificados",
-    descripcion: "Todos los miembros de TIVO pasan por un riguroso proceso de verificación de identidad.",
-  },
-  {
-    icono: Star,
-    titulo: "Sistema de calificaciones",
-    descripcion: "Revisa perfiles, comentarios y puntuaciones antes de elegir con quién viajar.",
-  },
-  {
-    icono: Lock,
-    titulo: "Datos protegidos",
-    descripcion: "Tu información personal está encriptada y protegida bajo los más altos estándares.",
-  },
-];
+const ICONOS = [UserCheck, Star, Lock];
 
 export default function Seguridad() {
+  const { t } = useLang();
+  const tS = t.seguridad;
+
   return (
     <section id="seguridad" className="relative py-20 md:py-28 px-6 lg:px-10 bg-white overflow-hidden">
 
-      {/* Decoración lateral */}
       <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#e8f6fb] blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Columna izquierda: texto y features */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -40,21 +26,20 @@ export default function Seguridad() {
           >
             <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#f5fbfe] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-5">
               <ShieldCheck className="w-3 h-3" />
-              Confianza y seguridad
+              {tS.badge}
             </span>
 
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0e2a3d] mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
-              Tu tranquilidad es parte del viaje
+              {tS.titulo}
             </h2>
 
             <p className="text-[#4a6170] text-base md:text-lg leading-relaxed mb-8">
-              Sabemos que compartir un viaje es compartir tu espacio. Por eso, en TIVO todos los usuarios pasan por un proceso de verificación. Nos preocupamos por ti en cada trayecto.
+              {tS.descripcion}
             </p>
 
-            {/* Features */}
             <div className="flex flex-col gap-4">
-              {features.map((f, i) => {
-                const Icono = f.icono;
+              {tS.features.map((f, i) => {
+                const Icono = ICONOS[i];
                 return (
                   <motion.div
                     key={f.titulo}
@@ -81,7 +66,6 @@ export default function Seguridad() {
             </div>
           </motion.div>
 
-          {/* Columna derecha: imagen emotiva */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -91,22 +75,13 @@ export default function Seguridad() {
           >
             <div className="relative max-w-md mx-auto">
 
-              {/* Anillos decorativos de fondo */}
               <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl" />
 
-              {/* Contenedor de la imagen */}
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/20 border-4 border-white">
-                <img
-                  src="/img1.jpg"
-                  alt="Viajera feliz usando su celular"
-                  className="w-full h-full object-cover"
-                />
-
-                {/* Degradado sutil sobre la imagen para integrar con la paleta */}
+                <img src="/img1.jpg" alt={tS.imagenAlt} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e2a3d]/40 via-transparent to-transparent" />
               </div>
 
-              {/* Badge flotante: Verificado */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -118,12 +93,11 @@ export default function Seguridad() {
                   <UserCheck className="w-5 h-5 text-[#1bb5e0]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">Verificado</p>
-                  <p className="text-[11px] text-[#4a6170]">Perfil aprobado</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">{tS.badgeVerificado.titulo}</p>
+                  <p className="text-[11px] text-[#4a6170]">{tS.badgeVerificado.subtitulo}</p>
                 </div>
               </motion.div>
 
-              {/* Badge flotante: Calificación */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -135,8 +109,8 @@ export default function Seguridad() {
                   <Star className="w-5 h-5 text-[#1bb5e0] fill-[#1bb5e0]" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">4.9 / 5.0</p>
-                  <p className="text-[11px] text-[#4a6170]">Calificación</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#0e4a6b]">{tS.badgeCalificacion.titulo}</p>
+                  <p className="text-[11px] text-[#4a6170]">{tS.badgeCalificacion.subtitulo}</p>
                 </div>
               </motion.div>
             </div>

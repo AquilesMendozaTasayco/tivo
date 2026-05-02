@@ -2,6 +2,7 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { useLang } from "@/lang/LanguageContext";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -20,6 +21,9 @@ const fadeRight = {
 };
 
 export default function SobreNosotrosInfo() {
+  const { t } = useLang();
+  const tSN = t.sobreNosotros;
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
@@ -31,7 +35,6 @@ export default function SobreNosotrosInfo() {
           {/* ── IZQUIERDA: IMAGEN ── */}
           <div className="relative flex items-center justify-center">
 
-            {/* Fondo color */}
             <motion.div
               className="absolute top-0 w-[90%] h-[480px] xl:h-[540px] rounded-3xl bg-[#0e4a6b]/8 z-0"
               initial={{ opacity: 0, x: -20 }}
@@ -39,7 +42,6 @@ export default function SobreNosotrosInfo() {
               transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            {/* Marco decorativo */}
             <motion.div
               className="absolute top-5 left-[5%] w-[90%] h-[480px] xl:h-[540px] rounded-3xl border-2 border-[#4ac8e8] z-0"
               initial={{ opacity: 0, x: -20 }}
@@ -47,7 +49,6 @@ export default function SobreNosotrosInfo() {
               transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            {/* Imagen principal */}
             <motion.div
               className="relative z-10 w-[85%] h-[480px] xl:h-[540px] rounded-3xl overflow-hidden shadow-2xl"
               variants={fadeRight}
@@ -56,7 +57,7 @@ export default function SobreNosotrosInfo() {
             >
               <img
                 src="/img6.jpg"
-                alt="TIVO Movilidad Compartida"
+                alt={tSN.imagenAlt}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   e.target.src =
@@ -66,7 +67,7 @@ export default function SobreNosotrosInfo() {
               <div className="absolute inset-0 bg-gradient-to-t from-[#0e4a6b]/40 via-transparent to-transparent" />
             </motion.div>
 
-            {/* Badge superior derecho */}
+            {/* Badge superior derecho — Ubicación */}
             <motion.div
               className="absolute top-6 right-0 z-20 flex items-center gap-3 bg-white rounded-2xl shadow-xl px-3.5 py-2.5 border border-[#d4eef9]"
               initial={{ opacity: 0, x: 20, y: -10 }}
@@ -74,23 +75,18 @@ export default function SobreNosotrosInfo() {
               transition={{ duration: 0.5, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] flex items-center justify-center flex-shrink-0">
-                {/* Ícono pin de ubicación */}
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-[#4a6170] font-medium">Operamos en</p>
-                <p className="text-sm font-bold text-[#0e2a3d]">Lima, Perú</p>
+                <p className="text-xs text-[#4a6170] font-medium">{tSN.badgeUbicacion.label}</p>
+                <p className="text-sm font-bold text-[#0e2a3d]">{tSN.badgeUbicacion.valor}</p>
               </div>
             </motion.div>
 
-            {/* Badge inferior derecho */}
+            {/* Badge inferior derecho — Esencia */}
             <motion.div
               className="absolute bottom-6 right-0 z-20 flex items-center gap-3 bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] rounded-2xl shadow-xl shadow-[#1bb5e0]/30 px-3.5 py-2.5"
               initial={{ opacity: 0, x: 20, y: 10 }}
@@ -98,20 +94,16 @@ export default function SobreNosotrosInfo() {
               transition={{ duration: 0.5, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0">
-                {/* Ícono de personas conectadas */}
                 <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
               <div>
-                <p className="text-xs text-white/70 font-medium">Nuestra esencia</p>
-                <p className="text-xs font-bold text-white leading-tight">Movilidad humana</p>
+                <p className="text-xs text-white/70 font-medium">{tSN.badgeEsencia.label}</p>
+                <p className="text-xs font-bold text-white leading-tight">{tSN.badgeEsencia.valor}</p>
               </div>
             </motion.div>
 
-            {/* Puntos decorativos */}
             <motion.div
               className="absolute -bottom-3 left-[5%] z-0 grid grid-cols-4 gap-1.5"
               initial={{ opacity: 0 }}
@@ -133,7 +125,7 @@ export default function SobreNosotrosInfo() {
               initial="hidden" animate={isInView ? "visible" : "hidden"}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#1bb5e0]" />
-              Quiénes somos
+              {tSN.badge}
             </motion.span>
 
             <motion.h2
@@ -142,9 +134,9 @@ export default function SobreNosotrosInfo() {
               variants={fadeUp} custom={0.08}
               initial="hidden" animate={isInView ? "visible" : "hidden"}
             >
-              Compartimos{" "}
+              {tSN.tituloPre}{" "}
               <span className="relative inline-block">
-                <span className="relative z-10 text-[#0e4a6b]">más que un viaje</span>
+                <span className="relative z-10 text-[#0e4a6b]">{tSN.tituloDestacado}</span>
                 <motion.span
                   className="absolute bottom-1 left-0 w-full h-2.5 bg-[#4ac8e8]/40 -z-0 rounded"
                   initial={{ scaleX: 0, originX: 0 }}
@@ -170,8 +162,9 @@ export default function SobreNosotrosInfo() {
               variants={fadeUp} custom={0.18}
               initial="hidden" animate={isInView ? "visible" : "hidden"}
             >
-              Somos <strong className="text-[#0e4a6b]">TIVO</strong>, una plataforma de movilidad compartida
-              que conecta a personas que desean trasladarse de forma segura, económica y confiable dentro de la ciudad.
+              {tSN.parrafo1Inicio}
+              <strong className="text-[#0e4a6b]">{tSN.parrafo1Marca}</strong>
+              {tSN.parrafo1Fin}
             </motion.p>
 
             <motion.p
@@ -179,9 +172,7 @@ export default function SobreNosotrosInfo() {
               variants={fadeUp} custom={0.24}
               initial="hidden" animate={isInView ? "visible" : "hidden"}
             >
-              Nuestra propuesta busca optimizar los viajes urbanos, permitiendo que los usuarios compartan
-              trayectos con personas previamente verificadas, promoviendo así una experiencia de transporte
-              más accesible, segura y humana.
+              {tSN.parrafo2}
             </motion.p>
 
             <motion.p
@@ -189,8 +180,7 @@ export default function SobreNosotrosInfo() {
               variants={fadeUp} custom={0.30}
               initial="hidden" animate={isInView ? "visible" : "hidden"}
             >
-              En TIVO creemos que la movilidad no solo consiste en llegar a un destino, sino en conectar
-              personas y compartir más que un viaje.
+              {tSN.parrafo3}
             </motion.p>
 
           </div>
