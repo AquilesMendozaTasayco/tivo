@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import PageHero from "@/components/PageHero";
-import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 
 // ─── Animaciones ──────────────────────────────────────────────────────────────
 const fadeUp = {
@@ -54,6 +54,15 @@ const infoCards = [
 
 const FORM_INICIAL = { nombre: "", email: "", telefono: "", asunto: "", mensaje: "" };
 
+// Etiquetas legibles para el asunto (para mostrar en el mensaje de WhatsApp)
+const ASUNTOS_LABEL = {
+  usuario: "Quiero usar la app TIVO",
+  conductor: "Quiero ser conductor",
+  soporte: "Soporte técnico",
+  alianza: "Alianzas comerciales",
+  otro: "Otro",
+};
+
 // ─── Componente principal ─────────────────────────────────────────────────────
 export default function ContactoPage() {
   const formRef   = useRef(null);
@@ -61,76 +70,42 @@ export default function ContactoPage() {
   const formInView  = useInView(formRef,  { once: true, margin: "-60px" });
   const cardsInView = useInView(cardsRef, { once: true, margin: "-60px" });
 
-  const [form, setForm]       = useState(FORM_INICIAL);
-  const [cargando, setCargando] = useState(false);
-
-  // Cargar SweetAlert2 dinámicamente (CDN) solo en el cliente
-  useEffect(() => {
-    if (document.getElementById("swal2-css")) return;
-    const link = document.createElement("link");
-    link.id   = "swal2-css";
-    link.rel  = "stylesheet";
-    link.href = "https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css";
-    document.head.appendChild(link);
-  }, []);
-
-  const getSwal = async () => {
-    const { default: Swal } = await import("sweetalert2");
-    return Swal;
-  };
+  const [form, setForm] = useState(FORM_INICIAL);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setCargando(true);
+  // Construir mensaje de WhatsApp con los datos del formulario
+  const construirMensajeWsp = () => {
+    let mensaje = "¡Hola TIVO! Me pongo en contacto con ustedes.\n\n";
+    mensaje += "*Mis datos:*\n";
+    mensaje += `• *Nombre:* ${form.nombre}\n`;
+    mensaje += `• *Correo:* ${form.email}\n`;
 
-    try {
-      const res = await fetch("/api/contacto", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-      const Swal = await getSwal();
-
-      if (res.ok && data.ok) {
-        await Swal.fire({
-          icon: "success",
-          title: "¡Mensaje enviado!",
-          html: "Gracias por contactar a TIVO.<br/>Nos comunicaremos contigo a la brevedad.",
-          confirmButtonText: "Aceptar",
-          confirmButtonColor: "#0e4a6b",
-          background: "#f5fbfe",
-          color: "#0e2a3d",
-          iconColor: "#1bb5e0",
-        });
-        setForm(FORM_INICIAL);
-      } else {
-        await Swal.fire({
-          icon: "error",
-          title: "Ocurrió un error",
-          html: data.error ?? "No se pudo enviar el mensaje.<br/>Por favor, intenta nuevamente.",
-          confirmButtonText: "Intentar de nuevo",
-          confirmButtonColor: "#0e4a6b",
-          background: "#fff8f8",
-          color: "#2e1a1a",
-          iconColor: "#c0392b",
-        });
-      }
-    } catch {
-      const Swal = await getSwal();
-      await Swal.fire({
-        icon: "error",
-        title: "Sin conexión",
-        text: "No se pudo conectar con el servidor. Revisa tu conexión a internet.",
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#0e4a6b",
-      });
-    } finally {
-      setCargando(false);
+    if (form.telefono.trim()) {
+      mensaje += `• *Teléfono:* ${form.telefono}\n`;
     }
+
+    if (form.asunto) {
+      mensaje += `• *Asunto:* ${ASUNTOS_LABEL[form.asunto] || form.asunto}\n`;
+    }
+
+    mensaje += `\n*Mensaje:*\n${form.mensaje}\n`;
+    mensaje += "\n¡Espero su respuesta, gracias!";
+
+    return encodeURIComponent(mensaje);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Abrir WhatsApp con el mensaje construido
+    const url = `https://wa.me/51900241682?text=${construirMensajeWsp()}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+
+    // Resetear formulario tras un momento
+    setTimeout(() => {
+      setForm(FORM_INICIAL);
+    }, 500);
   };
 
   // ─── SVGs de redes sociales (no dependen de lucide-react) ──────────────────
@@ -300,7 +275,7 @@ export default function ContactoPage() {
                 <span className="text-[#0e4a6b] italic">tu próximo viaje?</span>
               </h2>
               <p className="text-sm text-[#4a6170]">
-                Completa el formulario y nos pondremos en contacto contigo a la brevedad.
+                Completa el formulario y te contactaremos por WhatsApp.
               </p>
             </div>
 
@@ -395,38 +370,19 @@ export default function ContactoPage() {
                   />
                 </div>
 
-                {/* Botón enviar */}
+                {/* Botón WhatsApp (único botón de envío) */}
                 <button
                   type="submit"
-                  disabled={cargando}
-                  className="group flex items-center justify-center gap-2 w-full py-3.5 bg-gradient-to-r from-[#0e4a6b] to-[#1bb5e0] hover:from-[#0e4a6b] hover:to-[#0f8cb8] disabled:opacity-70 disabled:cursor-not-allowed text-white text-sm font-bold rounded-full shadow-lg shadow-[#1bb5e0]/30 hover:shadow-xl hover:shadow-[#1bb5e0]/40 transition-all duration-300 hover:-translate-y-0.5 mt-2"
-                >
-                  {cargando ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Enviando...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      Enviar mensaje
-                    </>
-                  )}
-                </button>
-
-                {/* WhatsApp directo */}
-                <a
-                  href="https://wa.me/51900241682"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group flex items-center justify-center gap-2 w-full py-3 bg-[#25d366] hover:bg-[#20bd5a] text-white text-sm font-semibold rounded-full transition-all duration-200 hover:-translate-y-0.5 shadow-md shadow-[#25d366]/30"
+                  className="group flex items-center justify-center gap-2 w-full py-3.5 mt-2 bg-[#25d366] hover:bg-[#20bd5a] text-white text-sm font-bold rounded-full shadow-lg shadow-[#25d366]/30 hover:shadow-xl hover:shadow-[#25d366]/40 transition-all duration-300 hover:-translate-y-0.5"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  Contactar por WhatsApp
-                </a>
+                  Enviar por WhatsApp
+                </button>
+
+                {/* Texto informativo */}
+                <p className="text-xs text-center text-[#8fb0c0]">
+                  Al enviar, se abrirá WhatsApp con tus datos listos para enviar.
+                </p>
               </form>
             </div>
           </motion.div>

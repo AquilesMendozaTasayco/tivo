@@ -6,9 +6,13 @@ import {
   collection, getDocs, addDoc, updateDoc, deleteDoc,
   doc, serverTimestamp, orderBy, query,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import { db, storage } from "@/lib/firebase";
 import Swal from "sweetalert2";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Save, Loader2, MessageSquare } from "lucide-react";
+import {
+  Plus, Pencil, Trash2, Eye, EyeOff, Upload, X, Save, Loader2,
+  Star, GripVertical, MessageSquareQuote,
+} from "lucide-react";
 
 const swalBase = {
   buttonsStyling: false,
@@ -27,29 +31,19 @@ const Toast = Swal.mixin({
   customClass: { popup: "!rounded-xl !shadow-xl !border !border-[#e2f0e4] !text-sm", timerProgressBar: "!bg-[#1a4a2e]" },
 });
 
-const COLORES = [
-  { label: "Verde oscuro",  value: "#1a4a2e" },
-  { label: "Verde medio",   value: "#2d6a4f" },
-  { label: "Azul",          value: "#1b6ca8" },
-  { label: "Marrón",        value: "#7b4f12" },
-  { label: "Rojo tierra",   value: "#b5451b" },
-];
-
-const PRODUCTOS = ["Cycitral", "Biomint", "Sana+", "Biofungi", "Esencia Verde"];
-
 const formInicial = {
-  nombre: "", ubicacion: "", producto: "Cycitral",
-  texto: "", estrellas: 5, inicial: "",
-  color: "#1a4a2e", active: true, orden: 0,
+  nombre: "", rol: "Usuario TIVO · Lima", mensaje: "",
+  rating: 5, foto: "", orden: 0, active: true,
 };
 
 export default function AdminTestimoniosPage() {
   const [testimonios, setTestimonios] = useState([]);
-  const [loading,     setLoading]     = useState(true);
-  const [showModal,   setShowModal]   = useState(false);
-  const [editando,    setEditando]    = useState(null);
-  const [formData,    setFormData]    = useState(formInicial);
-  const [saving,      setSaving]      = useState(false);
+  const [loading,   setLoading]   = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editando,  setEditando]  = useState(null);
+  const [formData,  setFormData]  = useState(formInicial);
+  const [saving,    setSaving]    = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => { fetchTestimonios(); }, []);
 
@@ -59,7 +53,22 @@ export default function AdminTestimoniosPage() {
       const snap = await getDocs(query(collection(db, "testimonios"), orderBy("orden", "asc")));
       setTestimonios(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch { Toast.fire({ icon: "error", title: "Error al cargar testimonios" }); }
-    finally  { setLoading(false); }
+    finally { setLoading(false); }
+  };
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) return Swal.fire({ ...swalBase, icon: "error", title: "Solo imágenes" });
+    if (file.size > 3 * 1024 * 1024)    return Swal.fire({ ...swalBase, icon: "error", title: "Máximo 3 MB" });
+    try {
+      setUploading(true);
+      const r = ref(storage, `testimonios/${Date.now()}_${file.name}`);
+      await uploadBytes(r, file);
+      set("foto", await getDownloadURL(r));
+      Toast.fire({ icon: "success", title: "Foto subida" });
+    } catch { Swal.fire({ ...swalBase, icon: "error", title: "Error al subir foto" }); }
+    finally { setUploading(false); }
   };
 
   const handleCrear = () => {
@@ -71,24 +80,26 @@ export default function AdminTestimoniosPage() {
   const handleEditar = (t) => {
     setEditando(t);
     setFormData({
-      nombre:    t.nombre    || "",
-      ubicacion: t.ubicacion || "",
-      producto:  t.producto  || "Cycitral",
-      texto:     t.texto     || "",
-      estrellas: t.estrellas ?? 5,
-      inicial:   t.inicial   || "",
-      color:     t.color     || "#1a4a2e",
-      active:    t.active !== false,
-      orden:     t.orden     ?? 0,
+      nombre:  t.nombre  || "",
+      rol:     t.rol     || "Usuario TIVO · Lima",
+      mensaje: t.mensaje || "",
+      rating:  t.rating  ?? 5,
+      foto:    t.foto    || "",
+      orden:   t.orden   ?? 0,
+      active:  t.active !== false,
     });
     setShowModal(true);
   };
 
   const handleGuardar = async () => {
-    if (!formData.nombre.trim()) return Swal.fire({ ...swalBase, icon: "warning", title: "Nombre requerido" });
-    if (!formData.texto.trim())  return Swal.fire({ ...swalBase, icon: "warning", title: "Texto del testimonio requerido" });
-    const inicial = formData.inicial.trim() || formData.nombre.trim()[0].toUpperCase();
-    const data = { ...formData, inicial, orden: Number(formData.orden), estrellas: Number(formData.estrellas), updatedAt: serverTimestamp() };
+    if (!formData.nombre.trim())  return Swal.fire({ ...swalBase, icon: "warning", title: "Nombre requerido" });
+    if (!formData.mensaje.trim()) return Swal.fire({ ...swalBase, icon: "warning", title: "Mensaje requerido" });
+    const data = {
+      ...formData,
+      orden: Number(formData.orden),
+      rating: Number(formData.rating),
+      updatedAt: serverTimestamp(),
+    };
     try {
       setSaving(true);
       if (editando) {
@@ -107,7 +118,7 @@ export default function AdminTestimoniosPage() {
   const handleToggle = async (t) => {
     try {
       await updateDoc(doc(db, "testimonios", t.id), { active: !t.active, updatedAt: serverTimestamp() });
-      Toast.fire({ icon: "success", title: t.active ? "Desactivado" : "Activado" });
+      Toast.fire({ icon: "success", title: t.active ? "Testimonio desactivado" : "Testimonio activado" });
       fetchTestimonios();
     } catch { Toast.fire({ icon: "error", title: "Error" }); }
   };
@@ -115,14 +126,15 @@ export default function AdminTestimoniosPage() {
   const handleEliminar = async (t) => {
     const r = await Swal.fire({
       ...swalBase, icon: "warning", title: "¿Eliminar testimonio?",
-      text: `El testimonio de "${t.nombre}" se eliminará permanentemente.`,
+      text: `"${t.nombre}" se eliminará permanentemente.`,
       showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
       customClass: { ...swalBase.customClass, confirmButton: "!bg-red-500 !rounded-xl !px-6 !py-2.5 !text-sm !font-semibold !text-white" },
     });
     if (!r.isConfirmed) return;
     try {
+      if (t.foto) try { await deleteObject(ref(storage, t.foto)); } catch {}
       await deleteDoc(doc(db, "testimonios", t.id));
-      Toast.fire({ icon: "success", title: "Eliminado" });
+      Toast.fire({ icon: "success", title: "Testimonio eliminado" });
       fetchTestimonios();
     } catch { Swal.fire({ ...swalBase, icon: "error", title: "Error al eliminar" }); }
   };
@@ -143,7 +155,7 @@ export default function AdminTestimoniosPage() {
               <div className="w-1 h-8 rounded-full bg-[#1a4a2e]" />
               <h1 className="text-2xl font-bold text-[#1a2e1f]" style={{ fontFamily: "Georgia, serif" }}>Testimonios</h1>
             </div>
-            <p className="ml-4 text-xs font-medium text-[#4a5a4e] uppercase tracking-widest mt-0.5">Gestiona las opiniones de los pacientes</p>
+            <p className="ml-4 text-xs font-medium text-[#4a5a4e] uppercase tracking-widest mt-0.5">Gestiona las historias de la comunidad TIVO</p>
           </div>
           <button onClick={handleCrear}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a4a2e] hover:bg-[#153d25] text-white text-sm font-semibold rounded-xl shadow-md shadow-[#1a4a2e]/20 hover:-translate-y-0.5 transition-all">
@@ -153,9 +165,9 @@ export default function AdminTestimoniosPage() {
 
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Total",     value: testimonios.length,                                   bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
-            { label: "Activos",   value: testimonios.filter((t) => t.active !== false).length,  bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
-            { label: "Inactivos", value: testimonios.filter((t) => t.active === false).length,   bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
+            { label: "Total",     value: testimonios.length, bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
+            { label: "Activos",   value: testimonios.filter((t) => t.active !== false).length, bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
+            { label: "Inactivos", value: testimonios.filter((t) => t.active === false).length, bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
           ].map((s, i) => (
             <motion.div key={i} className={`${s.bg} border ${s.border} rounded-2xl p-5 shadow-sm`}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -169,7 +181,7 @@ export default function AdminTestimoniosPage() {
           <div className="flex items-center justify-center py-32"><Loader2 className="h-8 w-8 animate-spin text-[#1a4a2e]" /></div>
         ) : testimonios.length === 0 ? (
           <div className="bg-white rounded-2xl border border-[#e2f0e4] p-16 text-center">
-            <MessageSquare className="h-14 w-14 mx-auto mb-4 text-[#c6e3cb]" />
+            <MessageSquareQuote className="h-14 w-14 mx-auto mb-4 text-[#c6e3cb]" />
             <p className="text-sm font-semibold text-[#4a5a4e] uppercase tracking-widest">No hay testimonios</p>
           </div>
         ) : (
@@ -180,32 +192,45 @@ export default function AdminTestimoniosPage() {
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
 
                 <div className="flex flex-col sm:flex-row">
-                  <div className="flex-shrink-0 flex items-center justify-center w-full sm:w-20 py-6 sm:py-0"
-                    style={{ backgroundColor: `${t.color}18` }}>
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold shadow-md"
-                      style={{ backgroundColor: t.color }}>
-                      {t.inicial || t.nombre?.[0]}
-                    </div>
-                  </div>
-
-                  <div className="flex-1 p-4 flex flex-col gap-2 min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-sm font-bold text-[#1a2e1f]">{t.nombre}</p>
-                      <span className="text-[10px] text-[#9ab5a0]">{t.ubicacion}</span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                        style={{ backgroundColor: `${t.color}18`, color: t.color }}>{t.producto}</span>
+                  {/* Foto o iniciales */}
+                  <div className="relative w-full sm:w-44 h-36 sm:h-auto flex-shrink-0 overflow-hidden bg-[#f0f7f1]">
+                    {t.foto ? (
+                      <img src={t.foto} alt={t.nombre} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-[#1a4a2e] to-[#4a8c5c] flex items-center justify-center min-h-[100px]">
+                        <span className="text-5xl font-bold text-white" style={{ fontFamily: "Georgia, serif" }}>
+                          {t.nombre?.charAt(0).toUpperCase() || "T"}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute top-2 left-2">
                       <span className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${t.active !== false ? "bg-[#f0f7f1] text-[#1a4a2e] border border-[#c6e3cb]" : "bg-red-50 text-red-600 border border-red-200"}`}>
                         {t.active !== false ? "Activo" : "Inactivo"}
                       </span>
                     </div>
-                    <div className="flex items-center gap-0.5">
-                      {Array.from({ length: t.estrellas || 5 }).map((_, j) => (
-                        <svg key={j} className="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
+                  </div>
+
+                  {/* Contenido */}
+                  <div className="flex-1 p-4 flex flex-col gap-3 min-w-0">
+                    <div className="flex items-start gap-2 min-w-0">
+                      <GripVertical className="h-4 w-4 text-[#c6e3cb] flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-sm font-bold text-[#1a2e1f] truncate">{t.nombre}</p>
+                          <div className="flex items-center gap-0.5">
+                            {[...Array(5)].map((_, s) => (
+                              <Star key={s} className={`h-3 w-3 ${s < (t.rating || 5) ? "text-[#1a4a2e] fill-[#1a4a2e]" : "text-[#c6e3cb]"}`} />
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-[10px] text-[#4a8c5c] font-medium mt-0.5">{t.rol}</p>
+                        <p className="text-xs text-[#4a5a4e] line-clamp-2 mt-1.5 italic">&ldquo;{t.mensaje}&rdquo;</p>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
+                          <span className="text-[10px] text-[#9ab5a0]">Orden: <span className="font-medium">{t.orden}</span></span>
+                          <span className="text-[10px] text-[#9ab5a0]">Rating: <span className="font-medium">{t.rating || 5}/5</span></span>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-[#4a5a4e] line-clamp-2 leading-relaxed">"{t.texto}"</p>
 
                     <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#f0f7f1]">
                       <button onClick={() => handleEditar(t)}
@@ -230,6 +255,7 @@ export default function AdminTestimoniosPage() {
         )}
       </div>
 
+      {/* MODAL */}
       <AnimatePresence>
         {showModal && (
           <>
@@ -255,90 +281,89 @@ export default function AdminTestimoniosPage() {
 
               <div className="px-7 py-6 flex flex-col gap-6">
 
+                {/* Datos del usuario */}
                 <div>
-                  <h3 className={sc}>Datos del paciente</h3>
-                  <div className="flex flex-col gap-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className={lc}>Nombre completo *</label>
-                        <input type="text" value={formData.nombre}
-                          onChange={(e) => { set("nombre", e.target.value); if (!formData.inicial) set("inicial", e.target.value[0]?.toUpperCase() || ""); }}
-                          placeholder="María Elena Quispe" className={ic} />
-                      </div>
-                      <div>
-                        <label className={lc}>Inicial del avatar <span className="normal-case text-[#9ab5a0] tracking-normal font-normal">(auto si está vacío)</span></label>
-                        <input type="text" value={formData.inicial} onChange={(e) => set("inicial", e.target.value.toUpperCase().slice(0, 1))}
-                          placeholder="M" maxLength={1} className={ic} />
-                      </div>
+                  <h3 className={sc}>Datos del usuario</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className={lc}>Nombre *</label>
+                      <input type="text" value={formData.nombre} onChange={(e) => set("nombre", e.target.value)}
+                        placeholder="María Fernández" className={ic} />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className={lc}>Ubicación</label>
-                        <input type="text" value={formData.ubicacion} onChange={(e) => set("ubicacion", e.target.value)}
-                          placeholder="Lima, Perú" className={ic} />
-                      </div>
-                      <div>
-                        <label className={lc}>Producto</label>
-                        <select value={formData.producto} onChange={(e) => set("producto", e.target.value)} className={ic}>
-                          {PRODUCTOS.map((p) => <option key={p} value={p}>{p}</option>)}
-                        </select>
-                      </div>
+                    <div>
+                      <label className={lc}>Rol</label>
+                      <input type="text" value={formData.rol} onChange={(e) => set("rol", e.target.value)}
+                        placeholder="Usuaria TIVO · Lima" className={ic} />
                     </div>
                   </div>
                 </div>
 
+                {/* Testimonio */}
                 <div>
-                  <h3 className={sc}>Contenido</h3>
+                  <h3 className={sc}>Contenido del testimonio</h3>
                   <div className="flex flex-col gap-4">
                     <div>
-                      <label className={lc}>Testimonio *</label>
-                      <textarea value={formData.texto} onChange={(e) => set("texto", e.target.value)} rows={4}
-                        placeholder="Escribir la experiencia del paciente..." className={`${ic} resize-none`} />
+                      <label className={lc}>Mensaje *</label>
+                      <textarea value={formData.mensaje} onChange={(e) => set("mensaje", e.target.value)} rows={5}
+                        placeholder="Antes mi trayecto era aburrido y solitario. Hoy comparto el viaje..." className={`${ic} resize-none italic`} />
+                      <p className="text-[10px] text-[#9ab5a0] mt-1.5">{formData.mensaje.length} caracteres · recomendado 100-200</p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className={lc}>Estrellas</label>
-                        <select value={formData.estrellas} onChange={(e) => set("estrellas", Number(e.target.value))} className={ic}>
-                          {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} estrella{n !== 1 ? "s" : ""}</option>)}
-                        </select>
-                      </div>
-                      <div>
-                        <label className={lc}>Orden <span className="normal-case text-[#9ab5a0] tracking-normal font-normal">(menor = primero)</span></label>
-                        <input type="number" value={formData.orden} onChange={(e) => set("orden", e.target.value)}
-                          placeholder="0" className={ic} />
+
+                    <div>
+                      <label className={lc}>Calificación</label>
+                      <div className="flex items-center gap-2">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button key={n} type="button" onClick={() => set("rating", n)}
+                            className="transition-transform hover:scale-110">
+                            <Star className={`h-7 w-7 ${n <= formData.rating ? "text-[#1a4a2e] fill-[#1a4a2e]" : "text-[#c6e3cb]"}`} />
+                          </button>
+                        ))}
+                        <span className="ml-2 text-sm font-semibold text-[#1a4a2e]">{formData.rating}/5</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                {/* Foto */}
                 <div>
-                  <h3 className={sc}>Color del avatar</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {COLORES.map((c) => (
-                      <button key={c.value} type="button" onClick={() => set("color", c.value)}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-semibold transition-all ${formData.color === c.value ? "border-[#1a4a2e] bg-[#f0f7f1] shadow-sm" : "border-[#e2f0e4] bg-white hover:border-[#a8d5a2]"}`}>
-                        <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ backgroundColor: c.value }} />
-                        {c.label}
+                  <h3 className={sc}>Foto (opcional)</h3>
+                  {formData.foto ? (
+                    <div className="relative w-fit">
+                      <img src={formData.foto} alt="preview" className="w-32 h-32 rounded-full object-cover border-4 border-[#d4e9d8]" />
+                      <button onClick={() => set("foto", "")}
+                        className="absolute top-0 right-0 p-1.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        <Trash2 className="h-3.5 w-3.5" />
                       </button>
-                    ))}
-                  </div>
-                  <div className="mt-3 flex items-center gap-3 p-3 rounded-xl bg-[#f8fdf8] border border-[#e2f0e4]">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
-                      style={{ backgroundColor: formData.color }}>
-                      {formData.inicial || formData.nombre?.[0]?.toUpperCase() || "?"}
                     </div>
-                    <div>
-                      <p className="text-xs font-bold text-[#1a2e1f]">{formData.nombre || "Nombre del paciente"}</p>
-                      <p className="text-[10px] text-[#6b7c6e]">{formData.ubicacion || "Ubicación"}</p>
-                    </div>
-                  </div>
+                  ) : (
+                    <label className={`flex h-32 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${uploading ? "border-[#1a4a2e] bg-[#f0f7f1]" : "border-[#c6e3cb] bg-[#f8fdf8] hover:border-[#1a4a2e] hover:bg-[#f0f7f1]"}`}>
+                      {uploading ? <Loader2 className="h-7 w-7 animate-spin text-[#1a4a2e]" /> : (
+                        <>
+                          <Upload className="h-7 w-7 text-[#a8d5a2] mb-2" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#4a5a4e]">Subir foto del usuario</span>
+                          <span className="text-[10px] text-[#9ab5a0] mt-0.5">PNG, JPG — máx. 3 MB — cuadrada recomendada</span>
+                        </>
+                      )}
+                      <input type="file" accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
+                    </label>
+                  )}
+                  {!formData.foto && (
+                    <p className="text-[10px] text-[#9ab5a0] mt-2">Si no subes foto, se mostrarán las iniciales en un círculo.</p>
+                  )}
+                </div>
+
+                {/* Orden */}
+                <div>
+                  <label className={lc}>Orden <span className="normal-case text-[#9ab5a0] tracking-normal font-normal">(menor = primero)</span></label>
+                  <input type="number" value={formData.orden} onChange={(e) => set("orden", e.target.value)}
+                    placeholder="0" className={ic} />
                 </div>
 
                 <label className="flex items-center gap-4 p-4 rounded-xl border border-[#c6e3cb] bg-[#f0f7f1] cursor-pointer hover:border-[#4a8c5c] transition-colors">
                   <input type="checkbox" checked={formData.active} onChange={(e) => set("active", e.target.checked)} className="h-4 w-4 accent-[#1a4a2e] rounded" />
                   <div>
                     <p className="text-xs font-bold text-[#1a4a2e] uppercase tracking-wider">Testimonio activo</p>
-                    <p className="text-xs text-[#4a5a4e]">Visible en el carrusel del sitio web</p>
+                    <p className="text-xs text-[#4a5a4e]">Visible en el home y en /testimonios</p>
                   </div>
                 </label>
               </div>
@@ -348,10 +373,10 @@ export default function AdminTestimoniosPage() {
                   className="flex-1 py-3 rounded-xl border border-[#d4e9d8] bg-[#f8fdf8] text-sm font-semibold text-[#4a5a4e] hover:bg-[#f0f7f1] transition-colors">
                   Cancelar
                 </button>
-                <button onClick={handleGuardar} disabled={saving}
+                <button onClick={handleGuardar} disabled={saving || uploading}
                   className="flex flex-1 items-center justify-center gap-2 py-3 rounded-xl bg-[#1a4a2e] hover:bg-[#153d25] disabled:opacity-60 text-white text-sm font-bold shadow-lg shadow-[#1a4a2e]/20 transition-all">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                  {saving ? "Guardando..." : editando ? "Actualizar" : "Crear testimonio"}
+                  {saving ? "Guardando..." : editando ? "Actualizar testimonio" : "Crear testimonio"}
                 </button>
               </div>
             </motion.div>

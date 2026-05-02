@@ -55,7 +55,7 @@ export default function SobreNosotrosInfo() {
               animate={isInView ? "visible" : "hidden"}
             >
               <img
-                src="https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=900&q=85&auto=format&fit=crop"
+                src="/img6.jpg"
                 alt="TIVO Movilidad Compartida"
                 className="w-full h-full object-cover"
                 onError={(e) => {

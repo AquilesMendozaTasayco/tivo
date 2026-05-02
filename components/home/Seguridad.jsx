@@ -81,7 +81,7 @@ export default function Seguridad() {
             </div>
           </motion.div>
 
-          {/* Columna derecha: ilustración visual */}
+          {/* Columna derecha: imagen emotiva */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -89,28 +89,24 @@ export default function Seguridad() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative aspect-square max-w-md mx-auto">
+            <div className="relative max-w-md mx-auto">
 
-              {/* Círculo decorativo grande */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#0e4a6b] via-[#0f6998] to-[#1bb5e0] shadow-2xl shadow-[#1bb5e0]/30" />
+              {/* Anillos decorativos de fondo */}
+              <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl" />
 
-              {/* Anillos decorativos */}
-              <div className="absolute -inset-4 rounded-full border-2 border-[#cfe7f4] opacity-60" />
-              <div className="absolute -inset-10 rounded-full border border-[#d4eef9] opacity-40" />
+              {/* Contenedor de la imagen */}
+              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/20 border-4 border-white">
+                <img
+                  src="/img1.jpg"
+                  alt="Viajera feliz usando su celular"
+                  className="w-full h-full object-cover"
+                />
 
-              {/* Ícono central escudo */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="relative"
-                >
-                  <div className="absolute inset-0 rounded-full bg-white/20 blur-2xl" />
-                  <ShieldCheck className="relative w-32 h-32 text-white" strokeWidth={1.3} />
-                </motion.div>
+                {/* Degradado sutil sobre la imagen para integrar con la paleta */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e2a3d]/40 via-transparent to-transparent" />
               </div>
 
-              {/* Badges flotantes */}
+              {/* Badge flotante: Verificado */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -127,6 +123,7 @@ export default function Seguridad() {
                 </div>
               </motion.div>
 
+              {/* Badge flotante: Calificación */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 whileInView={{ opacity: 1, scale: 1 }}

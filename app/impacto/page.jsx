@@ -230,40 +230,46 @@ export default function ImpactoPage() {
       <section ref={razonesRef} className="py-16 lg:py-24 px-6 lg:px-10 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
-          {/* Ilustración */}
+          {/* Imagen emotiva */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={razonesInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.7 }}
             className="relative order-2 lg:order-1"
           >
-            <div className="relative aspect-square max-w-md mx-auto">
+            <div className="relative max-w-md mx-auto">
 
-              {/* Anillos */}
-              <div className="absolute -inset-8 rounded-full border border-[#d4eef9] opacity-50" />
-              <div className="absolute -inset-2 rounded-full border-2 border-[#cfe7f4] opacity-70" />
+              {/* Resplandor decorativo detrás */}
+              <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl pointer-events-none" />
 
-              {/* Círculo principal */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#e8f6fb] via-[#d4eef9] to-[#cfe7f4]" />
+              {/* Imagen principal */}
+              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/25 border-4 border-white">
+                <img
+                  src="/img1.jpg"
+                  alt="Comunidad moviéndose junta por la ciudad"
+                  className="w-full h-full object-cover"
+                />
 
-              {/* Ícono mundo central */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <motion.div
-                  animate={{ rotate: [0, 5, 0, -5, 0] }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Globe className="w-40 h-40 text-[#0e4a6b]" strokeWidth={1.2} />
-                </motion.div>
+                {/* Degradado para integrar con la paleta */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, rgba(5,30,46,0.1) 0%, rgba(5,30,46,0.05) 50%, rgba(14,74,107,0.4) 100%)",
+                  }}
+                />
               </div>
 
-              {/* Badges flotantes alrededor */}
+              {/* Badges flotantes alrededor de la imagen */}
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={razonesInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.5 }}
-                className="absolute top-4 left-4 bg-white rounded-xl shadow-lg shadow-[#0e4a6b]/10 border border-[#d4eef9] p-3 flex items-center gap-2"
+                className="absolute -top-4 -left-4 bg-white rounded-xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-3 py-2.5 flex items-center gap-2"
               >
-                <Car className="w-4 h-4 text-[#1bb5e0]" />
+                <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
+                  <Car className="w-4 h-4 text-[#1bb5e0]" />
+                </div>
                 <span className="text-[11px] font-bold text-[#0e2a3d]">Menos autos</span>
               </motion.div>
 
@@ -271,9 +277,11 @@ export default function ImpactoPage() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={razonesInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="absolute top-1/2 right-0 bg-white rounded-xl shadow-lg shadow-[#0e4a6b]/10 border border-[#d4eef9] p-3 flex items-center gap-2"
+                className="absolute top-1/3 -right-5 bg-white rounded-xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-3 py-2.5 flex items-center gap-2"
               >
-                <Heart className="w-4 h-4 text-[#1bb5e0] fill-[#1bb5e0]" />
+                <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-[#1bb5e0] fill-[#1bb5e0]" />
+                </div>
                 <span className="text-[11px] font-bold text-[#0e2a3d]">Más conexión</span>
               </motion.div>
 
@@ -281,9 +289,11 @@ export default function ImpactoPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={razonesInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.9 }}
-                className="absolute bottom-6 left-8 bg-white rounded-xl shadow-lg shadow-[#0e4a6b]/10 border border-[#d4eef9] p-3 flex items-center gap-2"
+                className="absolute -bottom-4 left-6 bg-white rounded-xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-3 py-2.5 flex items-center gap-2"
               >
-                <Leaf className="w-4 h-4 text-[#1bb5e0]" />
+                <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
+                  <Leaf className="w-4 h-4 text-[#1bb5e0]" />
+                </div>
                 <span className="text-[11px] font-bold text-[#0e2a3d]">Ciudad verde</span>
               </motion.div>
 
@@ -291,9 +301,11 @@ export default function ImpactoPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={razonesInView ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.5, delay: 1.1 }}
-                className="absolute bottom-12 right-4 bg-white rounded-xl shadow-lg shadow-[#0e4a6b]/10 border border-[#d4eef9] p-3 flex items-center gap-2"
+                className="absolute bottom-10 -right-4 bg-white rounded-xl shadow-xl shadow-[#0e4a6b]/15 border border-[#d4eef9] px-3 py-2.5 flex items-center gap-2"
               >
-                <Users2 className="w-4 h-4 text-[#1bb5e0]" />
+                <div className="w-7 h-7 rounded-lg bg-[#e8f6fb] flex items-center justify-center">
+                  <Users2 className="w-4 h-4 text-[#1bb5e0]" />
+                </div>
                 <span className="text-[11px] font-bold text-[#0e2a3d]">Comunidad</span>
               </motion.div>
             </div>
