@@ -40,7 +40,7 @@ export default function Impacto() {
             className="relative w-full lg:w-[42%] min-h-[520px] lg:min-h-0"
           >
             <div className="relative lg:absolute inset-0 rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-[#051e2e]/60 min-h-[520px] lg:min-h-full">
-              <img src="/img2.jpg" alt={tImp.imagenAlt} className="w-full h-full object-cover" />
+              <img src="/11.jpg" alt={tImp.imagenAlt} className="w-full h-full object-cover" />
 
               <div
                 className="absolute inset-0"

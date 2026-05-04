@@ -18,6 +18,7 @@ const navbar = {
   menu: {
     inicio: "Inicio",
     ventajas: "Ventajas",
+    servicios: "Servicios",
     nosotros: "Nosotros",
     reservas: "Reservas",
     testimonios: "Testimonios",

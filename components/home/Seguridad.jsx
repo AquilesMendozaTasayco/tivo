@@ -78,7 +78,7 @@ export default function Seguridad() {
               <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-[#e8f6fb] to-[#cfe7f4] opacity-60 blur-2xl" />
 
               <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden shadow-2xl shadow-[#0e4a6b]/20 border-4 border-white">
-                <img src="/img1.jpg" alt={tS.imagenAlt} className="w-full h-full object-cover" />
+                <img src="/12.jpg" alt={tS.imagenAlt} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e2a3d]/40 via-transparent to-transparent" />
               </div>
 

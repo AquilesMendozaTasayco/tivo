@@ -10,18 +10,18 @@ import { useLang } from "@/lang/LanguageContext";
 const SLIDES_CONFIG = [
   {
     id: "mock-1",
-    imagen: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=1920&q=85&auto=format&fit=crop",
+    imagen: "./11.jpg",
     accion: "modal",
   },
   {
     id: "mock-2",
-    imagen: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=1920&q=85&auto=format&fit=crop",
+    imagen: "./12.jpg",
     accion: "link",
     href: "/seguridad",
   },
   {
     id: "mock-3",
-    imagen: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=1920&q=85&auto=format&fit=crop",
+    imagen: "./img4.jpg",
     accion: "modal",
   },
 ];

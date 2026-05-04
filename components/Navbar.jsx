@@ -60,7 +60,6 @@ export default function Navbar() {
                 >
                   {tNav.logo.nombre}
                 </span>
-                {/* Slogan: oculto en lg, visible en xl+ para no ocupar espacio del menú */}
                 <span
                   className={`hidden xl:block text-[9px] font-semibold tracking-widest uppercase transition-colors duration-500 whitespace-nowrap ${
                     isTransparent ? "text-white/70" : "text-[#1bb5e0]"
@@ -130,6 +129,20 @@ export default function Navbar() {
                     ))}
                   </div>
                 </div>
+              </li>
+
+              {/* ✅ NUEVO: Servicios */}
+              <li>
+                <Link
+                  href="/servicios"
+                  className={`px-2.5 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap ${
+                    isTransparent
+                      ? "text-white hover:bg-white/15"
+                      : "text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb]"
+                  }`}
+                >
+                  {tNav.menu.servicios}
+                </Link>
               </li>
 
               {/* Nosotros */}
@@ -202,7 +215,7 @@ export default function Navbar() {
                 </Link>
               </li>
 
-              {/* ── SELECTOR DE IDIOMA ── */}
+              {/* SELECTOR DE IDIOMA */}
               <li className="ml-1.5">
                 <LanguageSwitcher variant={isTransparent ? "light" : "dark"} />
               </li>
@@ -248,7 +261,7 @@ export default function Navbar() {
         {/* ── MENÚ MOBILE ── */}
         <div
           className={`lg:hidden transition-all duration-300 overflow-hidden ${
-            menuAbierto ? "max-h-[700px] opacity-100" : "max-h-0 opacity-0"
+            menuAbierto ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
           <div className="bg-white border-t border-[#d4eef9] px-6 py-4 flex flex-col gap-1">
@@ -290,6 +303,15 @@ export default function Navbar() {
                 </div>
               )}
             </div>
+
+            {/* ✅ NUEVO: Servicios mobile */}
+            <Link
+              href="/servicios"
+              className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
+              onClick={() => setMenuAbierto(false)}
+            >
+              {tNav.menu.servicios}
+            </Link>
 
             <Link
               href="/nosotros"
@@ -341,7 +363,6 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ── MODAL ÚNETE A TIVO ── */}
       <UneteModal abierto={modalAbierto} onCerrar={() => setModalAbierto(false)} />
     </>
   );

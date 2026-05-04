@@ -33,6 +33,7 @@ import politicaPrivacidadES   from "./es/politicaPrivacidad";
 import libroReclamacionesES   from "./es/libroReclamaciones";
 import preguntasFrecuentesES  from "./es/preguntasFrecuentes";
 import uneteModalES           from "./es/uneteModal";
+import serviciosPageES        from "./es/serviciosPage";   // ✅ NUEVO
 
 // ─── INGLÉS ─────────────────────────────────────────────────────────
 import navbarEN               from "./en/navbar";
@@ -59,6 +60,7 @@ import politicaPrivacidadEN   from "./en/politicaPrivacidad";
 import libroReclamacionesEN   from "./en/libroReclamaciones";
 import preguntasFrecuentesEN  from "./en/preguntasFrecuentes";
 import uneteModalEN           from "./en/uneteModal";
+import serviciosPageEN        from "./en/serviciosPage";   // ✅ NUEVO
 
 // ─── Construir objeto global de traducciones ───────────────────────
 const traducciones = {
@@ -87,6 +89,7 @@ const traducciones = {
     libroReclamaciones:   libroReclamacionesES,
     preguntasFrecuentes:  preguntasFrecuentesES,
     uneteModal:           uneteModalES,
+    serviciosPage:        serviciosPageES,                  // ✅ NUEVO
   },
   en: {
     navbar:               navbarEN,
@@ -113,6 +116,7 @@ const traducciones = {
     libroReclamaciones:   libroReclamacionesEN,
     preguntasFrecuentes:  preguntasFrecuentesEN,
     uneteModal:           uneteModalEN,
+    serviciosPage:        serviciosPageEN,                  // ✅ NUEVO
   },
 };
 
