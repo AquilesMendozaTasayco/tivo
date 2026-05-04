@@ -99,6 +99,15 @@ const reservasPage = {
     lineas: ["Lun – Vie: 8:00am – 7:00pm", "Sáb: 9:00am – 2:00pm"],
   },
 
+  // Sección "Métodos de pago"
+  metodosPago: {
+    badge: "Formas de pago",
+    titulo: "Nuestros métodos de pago",
+    subtitulo: "Paga de la forma que más te convenga. Aceptamos los principales medios digitales y tarjetas.",
+    disponibleLabel: "Disponible",
+    nota: "Pagos 100% seguros y verificados.",
+  },
+
   // Sección "Cómo funciona el proceso"
   proceso: {
     badge: "Proceso simple",

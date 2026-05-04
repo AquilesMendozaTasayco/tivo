@@ -18,6 +18,7 @@ import {
   Shield,
   Zap,
   Heart,
+  CreditCard,
 } from "lucide-react";
 
 const WHATSAPP_NUMERO = "51900241682";
@@ -36,6 +37,35 @@ const FORM_INICIAL = {
 // Iconos de los beneficios y los pasos del proceso (no se traducen)
 const ICONOS_BENEFICIOS = [Zap, Shield, Heart];
 const ICONOS_PROCESO = [FileText, MessageCircle, CheckCircle2];
+
+// ─── Métodos de pago ─────────────────────────────────────────────
+// Coloca los logos oficiales en /public/ con estos nombres exactos:
+// - /public/yape-logo.png  (descarga desde yape.com.pe)
+// - /public/plin-logo.png  (descarga del sitio oficial Plin)
+// - /public/visa-logo.png  (descarga desde usa.visa.com brand resources)
+//
+// Recomendación: usa logos en versión BLANCA (sobre fondo de color)
+// con fondo transparente (PNG) para que se vean bien sobre los gradientes.
+const METODOS_PAGO = [
+  {
+    nombre: "Yape",
+    logo: "/yape-logo.png",
+    bg: "linear-gradient(135deg, #5C2D91 0%, #7B3FB8 100%)",
+    accent: "#5C2D91",
+  },
+  {
+    nombre: "Plin",
+    logo: "/plin-logo.png",
+    bg: "linear-gradient(135deg, #00B0CA 0%, #00D4F0 100%)",
+    accent: "#00B0CA",
+  },
+  {
+    nombre: "Visa",
+    logo: "/visa-logo.png",
+    bg: "linear-gradient(135deg, #1A1F71 0%, #2E3FB6 100%)",
+    accent: "#1A1F71",
+  },
+];
 
 export default function ReservasPage() {
   const { t } = useLang();
@@ -425,6 +455,102 @@ export default function ReservasPage() {
             </div>
           </motion.div>
 
+        </div>
+      </section>
+
+      {/* MÉTODOS DE PAGO */}
+      <section className="py-16 lg:py-20 px-6 lg:px-10 bg-white relative overflow-hidden">
+
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] rounded-full bg-[#e8f6fb] blur-3xl pointer-events-none opacity-60" />
+
+        <div className="relative max-w-5xl mx-auto">
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center max-w-2xl mx-auto mb-12"
+          >
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#e8f6fb] border border-[#cfe7f4] text-[#0e4a6b] text-[10px] font-bold tracking-widest uppercase mb-4">
+              <CreditCard className="w-3 h-3" />
+              {tRP.metodosPago.badge}
+            </span>
+            <h2
+              className="text-3xl md:text-4xl font-bold text-[#0e2a3d] mb-3 leading-tight"
+              style={{ fontFamily: "Georgia, serif" }}
+            >
+              {tRP.metodosPago.titulo}
+            </h2>
+            <p className="text-[#4a6170] text-base">
+              {tRP.metodosPago.subtitulo}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            {METODOS_PAGO.map((metodo, i) => (
+              <motion.div
+                key={metodo.nombre}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.12 }}
+                className="group relative rounded-2xl overflow-hidden bg-white border-2 border-[#d4eef9] hover:border-transparent shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 cursor-default"
+                style={{ boxShadow: `0 10px 30px -10px ${metodo.accent}30` }}
+              >
+                <div className="relative aspect-[16/10] flex items-center justify-center p-8 bg-white">
+                  {/* Decoración sutil con color de marca */}
+                  <div
+                    className="absolute top-[-30%] right-[-20%] w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-10"
+                    style={{ background: metodo.accent }}
+                  />
+                  <div
+                    className="absolute bottom-[-30%] left-[-20%] w-40 h-40 rounded-full blur-3xl pointer-events-none opacity-10"
+                    style={{ background: metodo.accent }}
+                  />
+
+                  {/* Logo (imagen del archivo en /public) */}
+                  <div className="relative z-10 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center w-full h-full">
+                    <img
+                      src={metodo.logo}
+                      alt={`Logo ${metodo.nombre}`}
+                      className="max-h-20 max-w-[70%] w-auto h-auto object-contain"
+                    />
+                  </div>
+
+                  {/* Línea inferior con color de marca */}
+                  <div
+                    className="absolute bottom-0 left-0 right-0 h-1"
+                    style={{ background: metodo.bg }}
+                  />
+                </div>
+
+                <div className="bg-[#f5fbfe] p-4 flex items-center justify-between border-t border-[#d4eef9]">
+                  <div>
+                    <p className="text-[10px] font-bold text-[#8fb0c0] uppercase tracking-widest">
+                      {tRP.metodosPago.disponibleLabel}
+                    </p>
+                    <p className="text-sm font-bold text-[#0e2a3d]" style={{ fontFamily: "Georgia, serif" }}>
+                      {metodo.nombre}
+                    </p>
+                  </div>
+                  <CheckCircle2 className="w-5 h-5 text-[#1bb5e0] flex-shrink-0" />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Nota inferior */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-8 flex items-center justify-center gap-2 text-xs text-[#4a6170]"
+          >
+            <Shield className="w-4 h-4 text-[#1bb5e0]" />
+            <span>{tRP.metodosPago.nota}</span>
+          </motion.div>
         </div>
       </section>
 
