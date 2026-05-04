@@ -10,12 +10,12 @@ import { useLang } from "@/lang/LanguageContext";
 const SLIDES_CONFIG = [
   {
     id: "mock-1",
-    imagen: "./11.jpg",
+    imagen: "./11.png",
     accion: "modal",
   },
   {
     id: "mock-2",
-    imagen: "./12.jpg",
+    imagen: "./12.png",
     accion: "link",
     href: "/seguridad",
   },

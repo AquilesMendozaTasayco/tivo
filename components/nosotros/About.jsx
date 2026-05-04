@@ -56,7 +56,7 @@ export default function SobreNosotrosInfo() {
               animate={isInView ? "visible" : "hidden"}
             >
               <img
-                src="/12.jpg"
+                src="/13.png"
                 alt={tSN.imagenAlt}
                 className="w-full h-full object-cover"
                 onError={(e) => {

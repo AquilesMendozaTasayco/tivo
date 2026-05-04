@@ -71,7 +71,7 @@ export default function ServiciosPage() {
 
       {/* ── HERO ─────────────────────────── */}
 <PageHero
-  image="https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=1920&q=85&auto=format&fit=crop"
+  image="https://images.unsplash.com/photo-1535402181265-ea59cf18cb3e?w=1920&q=85&auto=format&fit=crop"
   title={tSP.hero.title}
   breadcrumb={tSP.hero.breadcrumb}
 />
