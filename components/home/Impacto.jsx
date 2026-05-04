@@ -32,14 +32,15 @@ export default function Impacto() {
       <div className="relative max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row gap-10 lg:gap-14 items-stretch">
 
+          {/* Columna imagen — FIX MÓVIL */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative w-full lg:w-[42%] min-h-[520px] lg:min-h-0"
+            className="relative w-full lg:w-[42%]"
           >
-            <div className="relative lg:absolute inset-0 rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-[#051e2e]/60 min-h-[520px] lg:min-h-full">
+            <div className="relative rounded-3xl overflow-hidden border border-white/15 shadow-2xl shadow-[#051e2e]/60 aspect-[4/3] lg:absolute lg:inset-0 lg:rounded-3xl">
               <img src="/11.png" alt={tImp.imagenAlt} className="w-full h-full object-cover" />
 
               <div
