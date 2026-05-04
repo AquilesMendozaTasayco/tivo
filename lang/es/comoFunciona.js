@@ -12,7 +12,7 @@ const comoFunciona = {
     {
       numero: "01",
       titulo: "Encuentra tu ruta",
-      descripcion: "Ingresa tu destino y descubre personas que van en la misma dirección que tú.",
+      descripcion: "Ingresar tu destino en la app y descubre personas que van en tu misma dirección. Tivo conecta a usuarios con trayectos similares.",
     },
     {
       numero: "02",

@@ -23,7 +23,7 @@ const comoFuncionaPage = {
     {
       numero: "01",
       titulo: "Encuentra tu ruta",
-      descripcion: "Ingresa a la app tu destino y descubre personas que van en la misma dirección que tú. Nuestra plataforma conecta usuarios con trayectos similares.",
+      descripcion: "Ingresar tu destino en la app y descubre personas que van en tu misma dirección. Tivo conecta a usuarios con trayectos similares.",
       detalles: [
         "Ingresa tu punto de partida",
         "Indica tu destino final",
