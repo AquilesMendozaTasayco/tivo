@@ -4,7 +4,6 @@ import { MapPinned, UserCheck, Car, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLang } from "@/lang/LanguageContext";
 
-// Mapa de íconos por número de paso (los íconos no se traducen)
 const ICONOS = [MapPinned, UserCheck, Car];
 
 export default function ComoFunciona() {
@@ -51,15 +50,15 @@ export default function ComoFunciona() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-stretch">
 
-          {/* Columna izquierda: imagen */}
+          {/* Columna izquierda: imagen — FIX MÓVIL */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative min-h-[520px] lg:min-h-0"
+            className="relative"
           >
-            <div className="relative lg:absolute inset-0 rounded-3xl overflow-hidden shadow-2xl shadow-[#0e4a6b]/20 border-4 border-white min-h-[520px] lg:min-h-full">
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-[#0e4a6b]/20 border-4 border-white aspect-[4/3] lg:absolute lg:inset-0 lg:rounded-3xl">
               <img
                 src="/img4.jpg"
                 alt={tCF.imagenAlt}
