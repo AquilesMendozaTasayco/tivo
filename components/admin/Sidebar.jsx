@@ -8,6 +8,8 @@ import {
   ImageIcon,
   LogOut,
   ChevronRight,
+  MessageSquareQuote,
+  MapPin,
 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -15,6 +17,8 @@ import Swal from "sweetalert2";
 
 const items = [
   { label: "Banners", href: "/admin/banners", icon: ImageIcon },
+  { label: "Testimonios", href: "/admin/testimonios", icon: MessageSquareQuote },
+  { label: "Contacto", href: "/admin/contacto", icon: MapPin },
 ];
 
 // ── Toast compartido ─────────────────────────────────────────────

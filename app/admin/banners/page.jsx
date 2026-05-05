@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  collection, getDocs, addDoc, updateDoc, deleteDoc,
-  doc, serverTimestamp, orderBy, query,
+  collection, getDocs, updateDoc,
+  doc, serverTimestamp, orderBy, query, setDoc,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "@/lib/firebase";
 import Swal from "sweetalert2";
-import { Plus, Pencil, Trash2, Eye, EyeOff, Upload, X, Save, Loader2, ImageIcon, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, Upload, X, Save, Loader2, ImageIcon, GripVertical, Zap } from "lucide-react";
 
 const swalBase = {
   buttonsStyling: false,
@@ -33,6 +33,9 @@ const formInicial = {
   imagen: "", orden: 0, active: true,
 };
 
+// IDs fijos disponibles
+const MOCK_IDS = ["mock-1", "mock-2", "mock-3", "mock-4", "mock-5"];
+
 export default function AdminBannersPage() {
   const [banners,   setBanners]   = useState([]);
   const [loading,   setLoading]   = useState(true);
@@ -41,6 +44,7 @@ export default function AdminBannersPage() {
   const [formData,  setFormData]  = useState(formInicial);
   const [saving,    setSaving]    = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [inicializando, setInicializando] = useState(false);
 
   useEffect(() => { fetchBanners(); }, []);
 
@@ -51,6 +55,78 @@ export default function AdminBannersPage() {
       setBanners(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch { Toast.fire({ icon: "error", title: "Error al cargar banners" }); }
     finally  { setLoading(false); }
+  };
+
+  // ✅ INICIALIZAR BANNERS (el script que pediste)
+  const handleInicializarBanners = async () => {
+    const confirmar = await Swal.fire({
+      ...swalBase,
+      icon: "warning",
+      title: "¿Inicializar banners?",
+      text: "Esto creará 3 banners de ejemplo. Solo necesitas hacerlo UNA VEZ.",
+      showCancelButton: true,
+      confirmButtonText: "Sí, inicializar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!confirmar.isConfirmed) return;
+
+    try {
+      setInicializando(true);
+
+      const banjersIniciales = [
+        {
+          id: "mock-1",
+          titulo: "Comparte el camino, conecta con personas",
+          subtitulo: "En TIVO creamos una nueva forma de moverte por la ciudad, donde cada viaje es una oportunidad para conectar, ahorrar y sentirte seguro. Muévete mejor, acompañado.",
+          cta: "Únete a TIVO",
+          accion: "modal",
+          href: "/",
+          imagen: "./11.png",
+          orden: 0,
+          active: true,
+        },
+        {
+          id: "mock-2",
+          titulo: "Tu tranquilidad es parte del viaje",
+          subtitulo: "Todos los usuarios en TIVO pasan por un proceso de verificación. Revisa perfiles, calificaciones y elige con quién viajar. Nos preocupamos por ti en cada trayecto.",
+          cta: "Conoce más",
+          accion: "link",
+          href: "/seguridad",
+          imagen: "./12.png",
+          orden: 1,
+          active: true,
+        },
+        {
+          id: "mock-3",
+          titulo: "Juntos movemos la ciudad de otra forma",
+          subtitulo: "Cada viaje compartido reduce autos en las calles, disminuye la contaminación y crea una ciudad más conectada. No solo compartes un viaje, construyes comunidad.",
+          cta: "Únete a TIVO",
+          accion: "modal",
+          href: "/",
+          imagen: "./img4.jpg",
+          orden: 2,
+          active: true,
+        },
+      ];
+
+      for (const banner of banjersIniciales) {
+        const { id, ...rest } = banner;
+        await setDoc(doc(db, "banners", id), {
+          ...rest,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
+
+      Toast.fire({ icon: "success", title: "✅ Banners inicializados correctamente!" });
+      fetchBanners();
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({ ...swalBase, icon: "error", title: "Error al inicializar" });
+    } finally {
+      setInicializando(false);
+    }
   };
 
   const handleUpload = async (e) => {
@@ -69,6 +145,17 @@ export default function AdminBannersPage() {
   };
 
   const handleCrear = () => {
+    const proximoId = MOCK_IDS.find(id => !banners.some(b => b.id === id));
+    
+    if (!proximoId) {
+      return Swal.fire({
+        ...swalBase,
+        icon: "warning",
+        title: "Límite de banners alcanzado",
+        text: `Solo puedes tener máximo ${MOCK_IDS.length} banners`
+      });
+    }
+
     setEditando(null);
     setFormData({ ...formInicial, orden: banners.length });
     setShowModal(true);
@@ -99,12 +186,22 @@ export default function AdminBannersPage() {
         await updateDoc(doc(db, "banners", editando.id), data);
         Toast.fire({ icon: "success", title: "Banner actualizado" });
       } else {
-        await addDoc(collection(db, "banners"), { ...data, createdAt: serverTimestamp() });
+        const proximoId = MOCK_IDS.find(id => !banners.some(b => b.id === id));
+        if (!proximoId) {
+          return Swal.fire({ ...swalBase, icon: "error", title: "No hay IDs disponibles" });
+        }
+        await setDoc(doc(db, "banners", proximoId), { 
+          ...data, 
+          createdAt: serverTimestamp() 
+        });
         Toast.fire({ icon: "success", title: "Banner creado" });
       }
       setShowModal(false);
       fetchBanners();
-    } catch { Swal.fire({ ...swalBase, icon: "error", title: "Error al guardar" }); }
+    } catch (error) {
+      console.error("Error guardando:", error);
+      Swal.fire({ ...swalBase, icon: "error", title: "Error al guardar" });
+    }
     finally { setSaving(false); }
   };
 
@@ -126,7 +223,13 @@ export default function AdminBannersPage() {
     if (!r.isConfirmed) return;
     try {
       if (b.imagen) try { await deleteObject(ref(storage, b.imagen)); } catch {}
-      await deleteDoc(doc(db, "banners", b.id));
+      await updateDoc(doc(db, "banners", b.id), { 
+        titulo: "", 
+        subtitulo: "", 
+        cta: "", 
+        imagen: "", 
+        active: false 
+      });
       Toast.fire({ icon: "success", title: "Banner eliminado" });
       fetchBanners();
     } catch { Swal.fire({ ...swalBase, icon: "error", title: "Error al eliminar" }); }
@@ -150,17 +253,26 @@ export default function AdminBannersPage() {
             </div>
             <p className="ml-4 text-xs font-medium text-[#4a5a4e] uppercase tracking-widest mt-0.5">Gestiona el carrusel de la página principal</p>
           </div>
-          <button onClick={handleCrear}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a4a2e] hover:bg-[#153d25] text-white text-sm font-semibold rounded-xl shadow-md shadow-[#1a4a2e]/20 hover:-translate-y-0.5 transition-all">
-            <Plus className="h-4 w-4" /> Nuevo banner
-          </button>
+          <div className="flex gap-2">
+            {banners.filter(b => b.titulo).length === 0 && (
+              <button onClick={handleInicializarBanners} disabled={inicializando}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-60 text-white text-sm font-semibold rounded-xl shadow-md shadow-yellow-500/20 hover:-translate-y-0.5 transition-all">
+                {inicializando ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4" />}
+                {inicializando ? "Inicializando..." : "Inicializar banners"}
+              </button>
+            )}
+            <button onClick={handleCrear}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#1a4a2e] hover:bg-[#153d25] text-white text-sm font-semibold rounded-xl shadow-md shadow-[#1a4a2e]/20 hover:-translate-y-0.5 transition-all">
+              <Plus className="h-4 w-4" /> Nuevo banner
+            </button>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Total",     value: banners.length,                                     bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
-            { label: "Activos",   value: banners.filter((b) => b.active !== false).length,   bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
-            { label: "Inactivos", value: banners.filter((b) => b.active === false).length,   bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
+            { label: "Total",     value: banners.filter(b => b.titulo).length,                                     bg: "bg-white",     border: "border-[#e2f0e4]", text: "text-[#1a2e1f]" },
+            { label: "Activos",   value: banners.filter((b) => b.active !== false && b.titulo).length,   bg: "bg-[#f0f7f1]", border: "border-[#c6e3cb]", text: "text-[#1a4a2e]" },
+            { label: "Inactivos", value: banners.filter((b) => b.active === false && b.titulo).length,   bg: "bg-red-50",    border: "border-red-200",   text: "text-red-600"   },
           ].map((s, i) => (
             <motion.div key={i} className={`${s.bg} border ${s.border} rounded-2xl p-5 shadow-sm`}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
@@ -172,14 +284,15 @@ export default function AdminBannersPage() {
 
         {loading ? (
           <div className="flex items-center justify-center py-32"><Loader2 className="h-8 w-8 animate-spin text-[#1a4a2e]" /></div>
-        ) : banners.length === 0 ? (
+        ) : banners.filter(b => b.titulo).length === 0 ? (
           <div className="bg-white rounded-2xl border border-[#e2f0e4] p-16 text-center">
             <ImageIcon className="h-14 w-14 mx-auto mb-4 text-[#c6e3cb]" />
             <p className="text-sm font-semibold text-[#4a5a4e] uppercase tracking-widest">No hay banners</p>
+            <p className="text-xs text-[#9ab5a0] mt-2">Haz clic en "Inicializar banners" para crear los primeros</p>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {banners.map((b, i) => (
+            {banners.filter(b => b.titulo).map((b, i) => (
               <motion.div key={b.id}
                 className="group bg-white rounded-2xl border border-[#e2f0e4] hover:border-[#4a8c5c] hover:shadow-lg overflow-hidden transition-all duration-300"
                 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>

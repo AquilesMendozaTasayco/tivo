@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import PageHero from "@/components/PageHero";
 import { Phone, Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 import { useLang } from "@/lang/LanguageContext";
 
 const ICONOS_CARDS = [Phone, Mail, MapPin, Clock];
 
-const HREFS_CARDS = [
-  ["https://wa.me/51900241682"],
-  ["mailto:contacto@tivo.pe"],
-  ["https://www.google.com/maps/search/?api=1&query=Lima%2C+Per%C3%BA"],
-  [],
-];
+// ✅ Paths de iconos para redes (fallback)
+const REDES_PATHS = {
+  facebook: "M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5c-.563-.074-1.751-.216-3.32-.216-3.384 0-5.699 2.064-5.699 5.844v2.372z",
+  instagram: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z",
+  tiktok: "M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1z",
+  whatsapp: "M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413z",
+};
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -35,39 +38,44 @@ const item = {
 
 const FORM_INICIAL = { nombre: "", email: "", telefono: "", asunto: "", mensaje: "" };
 
-const REDES = [
-  {
-    nombre: "Facebook",
-    href: "https://www.facebook.com/people/Tivo-Per%C3%BA/61576546337032/?mibextid=wwXIfr&rdid=StYltb6GXSzOwnfp&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18RjvhwLjx%2F%3Fmibextid%3DwwXIfr",
-    path: "M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5c-.563-.074-1.751-.216-3.32-.216-3.384 0-5.699 2.064-5.699 5.844v2.372z",
-  },
-  {
-    nombre: "Instagram",
-    href: "https://www.instagram.com/tivo_peru?utm_source=qr&igsh=MWp0MDFjYnh2Z2J0Yg%3D%3D",
-    path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z",
-  },
-  {
-    nombre: "TikTok",
-    href: "https://www.tiktok.com/@tivo.viajes?_r=1&_t=ZS-95yZgEkD9",
-    path: "M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1z",
-  },
-  {
-    nombre: "WhatsApp",
-    href: "https://wa.me/51900241682",
-    path: "M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413z",
-  },
-];
-
 export default function ContactoPage() {
   const { t } = useLang();
   const tCP = t.contactoPage;
 
-  const formRef   = useRef(null);
-  const cardsRef  = useRef(null);
-  const formInView  = useInView(formRef,  { once: true, margin: "-60px" });
+  const [datosContacto, setDatosContacto] = useState(null);
+  const [redesSociales, setRedesSociales] = useState({});
+  const [loadingDatos, setLoadingDatos] = useState(true);
+  const [form, setForm] = useState(FORM_INICIAL);
+
+  const formRef = useRef(null);
+  const cardsRef = useRef(null);
+  const formInView = useInView(formRef, { once: true, margin: "-60px" });
   const cardsInView = useInView(cardsRef, { once: true, margin: "-60px" });
 
-  const [form, setForm] = useState(FORM_INICIAL);
+  // ✅ Cargar TODO desde Firebase
+  useEffect(() => {
+    const fetchDatos = async () => {
+      try {
+        // 📍 Contacto
+        const contactoSnap = await getDocs(collection(db, "contacto"));
+        if (contactoSnap.docs.length > 0) {
+          setDatosContacto(contactoSnap.docs[0].data());
+        }
+
+        // 🌐 Redes Sociales
+        const redesSnap = await getDocs(collection(db, "redesSociales"));
+        if (redesSnap.docs.length > 0) {
+          setRedesSociales(redesSnap.docs[0].data());
+        }
+      } catch (error) {
+        console.error("Error cargando datos:", error);
+      } finally {
+        setLoadingDatos(false);
+      }
+    };
+
+    fetchDatos();
+  }, []);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -95,7 +103,9 @@ export default function ContactoPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const url = `https://wa.me/51900241682?text=${construirMensajeWsp()}`;
+    // ✅ Usa el teléfono de Firebase
+    const telefonoWsp = datosContacto?.telefono || "51900241682";
+    const url = `https://wa.me/${telefonoWsp.replace(/[^0-9]/g, "")}?text=${construirMensajeWsp()}`;
     window.open(url, "_blank", "noopener,noreferrer");
     setTimeout(() => setForm(FORM_INICIAL), 500);
   };
@@ -135,107 +145,181 @@ export default function ContactoPage() {
               </h2>
             </div>
 
-            <div className="w-full h-64 rounded-2xl overflow-hidden border border-[#d4eef9] shadow-lg shadow-[#0e4a6b]/8">
-              <iframe
-                title={tCP.columnaInfo.mapaTitulo}
-                src="https://maps.google.com/maps?q=Lima%2C+Per%C3%BA&t=&z=11&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </div>
+            {/* MAPA */}
+            {!loadingDatos && datosContacto?.mapUrl ? (
+              <div className="w-full h-64 rounded-2xl overflow-hidden border border-[#d4eef9] shadow-lg shadow-[#0e4a6b]/8">
+                <iframe
+                  title={tCP.columnaInfo.mapaTitulo}
+                  src={datosContacto.mapUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            ) : (
+              <div className="w-full h-64 rounded-2xl bg-[#f5fbfe] border border-[#d4eef9] flex items-center justify-center">
+                <MapPin className="h-12 w-12 text-[#8fb0c0]" />
+              </div>
+            )}
 
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Lima%2C+Per%C3%BA"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[#d4eef9] hover:border-[#1bb5e0] hover:bg-[#f5fbfe] text-sm font-semibold text-[#0e4a6b] transition-all duration-200"
-            >
-              <MapPin className="w-4 h-4 text-[#1bb5e0]" />
-              {tCP.columnaInfo.abrirMaps}
-              <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </a>
+            {/* BOTÓN MAPS */}
+            {!loadingDatos && datosContacto?.direccion && (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(datosContacto.direccion)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-white border border-[#d4eef9] hover:border-[#1bb5e0] hover:bg-[#f5fbfe] text-sm font-semibold text-[#0e4a6b] transition-all duration-200"
+              >
+                <MapPin className="w-4 h-4 text-[#1bb5e0]" />
+                {tCP.columnaInfo.abrirMaps}
+                <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </a>
+            )}
 
+            {/* TARJETAS DE CONTACTO - Del Firebase */}
             <motion.div
               className="flex flex-col gap-3"
               variants={stagger}
               initial="hidden"
               animate={cardsInView ? "visible" : "hidden"}
             >
-              {tCP.cards.map((card, i) => {
-                const Icono = ICONOS_CARDS[i];
-                const hrefs = HREFS_CARDS[i] || [];
-                return (
+              {!loadingDatos && datosContacto && (
+                <>
+                  {/* Teléfono */}
                   <motion.div
-                    key={i}
                     className="group bg-white rounded-2xl border border-[#d4eef9] hover:border-[#1bb5e0] hover:shadow-lg hover:shadow-[#1bb5e0]/10 transition-all duration-300 p-4 flex items-center gap-4"
                     variants={item}
                   >
                     <div className="relative flex-shrink-0">
                       <div className="absolute inset-0 rounded-xl bg-[#1bb5e0] blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
                       <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] flex items-center justify-center shadow-md shadow-[#1bb5e0]/25">
-                        <Icono className="w-5 h-5 text-white" strokeWidth={1.8} />
+                        <Phone className="w-5 h-5 text-white" strokeWidth={1.8} />
                       </div>
                     </div>
-
                     <div className="flex flex-col gap-0.5 flex-1 min-w-0">
                       <p className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
-                        {card.titulo}
+                        {tCP.formulario.labels.telefono}
                       </p>
-                      <div className="flex flex-col gap-0.5">
-                        {card.lineas.map((linea, j) => (
-                          hrefs[j] ? (
-                            <a
-                              key={j}
-                              href={hrefs[j]}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-[#0e2a3d] hover:text-[#1bb5e0] transition-colors font-medium truncate"
-                            >
-                              {linea}
-                            </a>
-                          ) : (
-                            <span key={j} className="text-sm text-[#4a6170] font-medium">
-                              {linea}
-                            </span>
-                          )
-                        ))}
-                      </div>
+                      <a
+                        href={`tel:${datosContacto.telefono}`}
+                        className="text-sm text-[#0e2a3d] hover:text-[#1bb5e0] transition-colors font-medium truncate"
+                      >
+                        {datosContacto.telefono}
+                      </a>
                     </div>
                   </motion.div>
-                );
-              })}
+
+                  {/* Correo */}
+                  <motion.div
+                    className="group bg-white rounded-2xl border border-[#d4eef9] hover:border-[#1bb5e0] hover:shadow-lg hover:shadow-[#1bb5e0]/10 transition-all duration-300 p-4 flex items-center gap-4"
+                    variants={item}
+                  >
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 rounded-xl bg-[#1bb5e0] blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
+                      <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] flex items-center justify-center shadow-md shadow-[#1bb5e0]/25">
+                        <Mail className="w-5 h-5 text-white" strokeWidth={1.8} />
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                      <p className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
+                        {tCP.formulario.labels.email}
+                      </p>
+                      <a
+                        href={`mailto:${datosContacto.correo}`}
+                        className="text-sm text-[#0e2a3d] hover:text-[#1bb5e0] transition-colors font-medium truncate"
+                      >
+                        {datosContacto.correo}
+                      </a>
+                    </div>
+                  </motion.div>
+
+                  {/* Dirección */}
+                  {datosContacto.direccion && (
+                    <motion.div
+                      className="group bg-white rounded-2xl border border-[#d4eef9] hover:border-[#1bb5e0] hover:shadow-lg hover:shadow-[#1bb5e0]/10 transition-all duration-300 p-4 flex items-center gap-4"
+                      variants={item}
+                    >
+                      <div className="relative flex-shrink-0">
+                        <div className="absolute inset-0 rounded-xl bg-[#1bb5e0] blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
+                        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] flex items-center justify-center shadow-md shadow-[#1bb5e0]/25">
+                          <MapPin className="w-5 h-5 text-white" strokeWidth={1.8} />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
+                          Dirección
+                        </p>
+                        <p className="text-sm text-[#0e2a3d] font-medium">{datosContacto.direccion}</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Horarios */}
+                  {datosContacto.horarios && datosContacto.horarios.length > 0 && (
+                    <motion.div
+                      className="group bg-white rounded-2xl border border-[#d4eef9] hover:border-[#1bb5e0] hover:shadow-lg hover:shadow-[#1bb5e0]/10 transition-all duration-300 p-4 flex items-start gap-4"
+                      variants={item}
+                    >
+                      <div className="relative flex-shrink-0">
+                        <div className="absolute inset-0 rounded-xl bg-[#1bb5e0] blur-md opacity-0 group-hover:opacity-30 transition-opacity" />
+                        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#0e4a6b] to-[#1bb5e0] flex items-center justify-center shadow-md shadow-[#1bb5e0]/25">
+                          <Clock className="w-5 h-5 text-white" strokeWidth={1.8} />
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 flex-1 min-w-0">
+                        <p className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
+                          Horarios
+                        </p>
+                        <div className="space-y-1">
+                          {datosContacto.horarios.map((h, i) => (
+                            <div key={i}>
+                              <p className="text-[10px] font-semibold text-[#4a6170]">{h.dia}</p>
+                              <p className="text-sm font-medium text-[#0e2a3d]">{h.horario}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </>
+              )}
             </motion.div>
 
+            {/* REDES SOCIALES - Del Firebase */}
             <div className="bg-gradient-to-br from-[#f5fbfe] to-[#e8f6fb] border border-[#d4eef9] rounded-2xl p-5 flex flex-col gap-3">
               <p className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
                 {tCP.columnaInfo.siguenosEnRedes}
               </p>
               <div className="flex items-center gap-3">
-                {REDES.map((r) => (
-                  <a
-                    key={r.nombre}
-                    href={r.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={r.nombre}
-                    className="w-10 h-10 rounded-xl bg-white border border-[#d4eef9] hover:bg-gradient-to-br hover:from-[#0e4a6b] hover:to-[#1bb5e0] hover:border-transparent flex items-center justify-center text-[#4a6170] hover:text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm"
-                  >
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d={r.path} />
-                    </svg>
-                  </a>
-                ))}
+                {Object.entries(redesSociales).map(([key, red]) => {
+                  // ✅ Si la red tiene href, mostrar botón
+                  if (!red.href) return null;
+                  
+                  return (
+                    <a
+                      key={key}
+                      href={red.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={red.nombre}
+                      className="w-10 h-10 rounded-xl bg-white border border-[#d4eef9] hover:bg-gradient-to-br hover:from-[#0e4a6b] hover:to-[#1bb5e0] hover:border-transparent flex items-center justify-center text-[#4a6170] hover:text-white transition-all duration-200 hover:-translate-y-0.5 shadow-sm"
+                    >
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d={red.path} />
+                      </svg>
+                    </a>
+                  );
+                })}
               </div>
             </div>
           </motion.div>
 
-          {/* COLUMNA DERECHA */}
+          {/* COLUMNA DERECHA - FORMULARIO */}
           <motion.div
             ref={formRef}
             className="lg:col-span-3 flex flex-col gap-6"

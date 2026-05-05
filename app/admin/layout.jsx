@@ -19,6 +19,11 @@ export default function AdminLayout({ children }) {
       if (user) {
         setAuthenticated(true);
         setLoading(false);
+        
+        // ✅ Si está en /admin (raíz), redirige a /admin/banners
+        if (pathname === "/admin" || pathname === "/admin/") {
+          router.push("/admin/banners");
+        }
       } else {
         setAuthenticated(false);
         setLoading(false);
@@ -28,7 +33,7 @@ export default function AdminLayout({ children }) {
       }
     });
     return () => unsubscribe();
-  }, [router, isLoginPage]);
+  }, [router, isLoginPage, pathname]);
 
   if (loading) {
     return (
