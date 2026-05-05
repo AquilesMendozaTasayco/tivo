@@ -56,7 +56,7 @@ export default function AdminLogin() {
         text: "Bienvenido al panel de TIVO.",
       });
 
-      router.push("/admin/productos");
+      router.push("/admin/banners");
     } catch (err) {
       const msg =
         err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"
