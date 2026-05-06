@@ -19,7 +19,6 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-// Iconos NO traducidos (mismo orden que pasos y beneficios)
 const ICONOS_PASOS = [MapPinned, UserCheck, Car];
 const ICONOS_BENEFICIOS = [ShieldCheck, Star, CreditCard, Smartphone];
 
@@ -116,13 +115,9 @@ export default function ComoFuncionaPage() {
               >
                 {/* Texto */}
                 <div className={esPar ? "lg:col-start-2" : ""}>
+                  {/* CAMBIO: eliminado el número grande translúcido (text-5xl text-[#1bb5e0]/25).
+                      Solo se muestra el badge "Paso X" con la línea divisoria. */}
                   <div className="inline-flex items-center gap-3 mb-4">
-                    <div
-                      className="text-5xl md:text-6xl font-bold text-[#1bb5e0]/25 leading-none"
-                      style={{ fontFamily: "Georgia, serif" }}
-                    >
-                      {paso.numero}
-                    </div>
                     <div className="w-12 h-px bg-[#1bb5e0]" />
                     <span className="text-[10px] font-bold text-[#0e4a6b] uppercase tracking-widest">
                       {tCFP.pasoLabel} {paso.numero}
@@ -154,6 +149,7 @@ export default function ComoFuncionaPage() {
                 <div className={esPar ? "lg:col-start-1 lg:row-start-1" : ""}>
                   <div className="relative bg-white rounded-3xl border border-[#d4eef9] shadow-xl shadow-[#0e4a6b]/8 p-10 md:p-14 overflow-hidden">
 
+                    {/* El número de fondo se conserva como único elemento decorativo numérico */}
                     <span
                       className="absolute top-2 right-4 text-[120px] font-bold text-[#e8f6fb] select-none leading-none pointer-events-none"
                       style={{ fontFamily: "Georgia, serif" }}

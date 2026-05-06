@@ -40,12 +40,13 @@ export default function Navbar() {
 
             {/* ── LOGO + TEXTO ── */}
             <Link href="/" className="flex items-center gap-2.5 group flex-shrink-0">
-              <div className="relative w-11 h-11 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 flex-shrink-0">
+              {/* CAMBIO: logo aumentado de w-11 h-11 (44px) a w-14 h-14 (56px) */}
+              <div className="relative w-14 h-14 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 flex-shrink-0">
                 <img
                   src="/logo.png"
                   alt={tNav.logo.nombre}
-                  width={44}
-                  height={44}
+                  width={56}
+                  height={56}
                   className={`w-full h-full object-contain transition-all duration-500 ${
                     isTransparent ? "brightness-0 invert" : "brightness-100 invert-0"
                   }`}
@@ -60,8 +61,9 @@ export default function Navbar() {
                 >
                   {tNav.logo.nombre}
                 </span>
+                {/* CAMBIO: slogan visible desde sm (antes solo xl) */}
                 <span
-                  className={`hidden xl:block text-[9px] font-semibold tracking-widest uppercase transition-colors duration-500 whitespace-nowrap ${
+                  className={`block text-[9px] font-semibold tracking-widest uppercase transition-colors duration-500 whitespace-nowrap ${
                     isTransparent ? "text-white/70" : "text-[#1bb5e0]"
                   }`}
                 >
@@ -131,7 +133,7 @@ export default function Navbar() {
                 </div>
               </li>
 
-              {/* ✅ NUEVO: Servicios */}
+              {/* Servicios */}
               <li>
                 <Link
                   href="/servicios"
@@ -304,7 +306,7 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* ✅ NUEVO: Servicios mobile */}
+            {/* Servicios mobile */}
             <Link
               href="/servicios"
               className="px-3 py-3 text-sm font-medium text-[#2d3748] hover:text-[#0e4a6b] hover:bg-[#e8f6fb] rounded-lg transition-colors"
